@@ -9,6 +9,10 @@
 -- It is made available to help support integration with deployments that rely on standard
 -- OpenACS features.
 
+CREATE SEQUENCE qal_id start 10000;
+SELECT nextval ('qal_id');
+
+
 CREATE TABLE qal_contact_object_id_map (
        -- contact is a party of type group
        object_id integer unique not null,

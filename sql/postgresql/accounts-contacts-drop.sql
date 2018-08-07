@@ -39,3 +39,4 @@ drop index qal_contact_id_idx;
 
 DROP TABLE qal_contact;
 
+DROP SEQUENCE qal_id;
