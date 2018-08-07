@@ -1,0 +1,6 @@
+Preserved the database qal_ prefix, because q-control nomenclature already uses qal_contact.
+Much like the other api prefixes, where procedures originally defined in one package were moved to another,
+because they have usefulness beyond the original package's scope.
+Except here, the prefix keeps the existing usage and keeps the package associated with its primary purpose:
+to serve as contact manager for the accounts-ledger package.
+
