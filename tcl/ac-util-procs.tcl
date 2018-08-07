@@ -14,51 +14,58 @@ ad_library {
 # accounts-contacts.contact_id references refer to accounts-ledeger.contact_id
 # so that package can be used  with contacts, contacts, or vendors.
 
-ad_proc -private cs_contact_ids_of_user_id { 
-    {user_id ""}
+ad_proc -public qal_keys_by {
+    keys_list
+    {separator ""}
 } {
-    Returns list of contact_id available to user_id in a contact's role position.
-} {
-    upvar 1 instance_id instance_id
-    if { ![info exists instance_id] } {
-        # set instance_id package_id
-        set instance_id [qc_set_instance_id]
+    if { $separator ne ""} {
+        set keys ""
+        if { $separator eq ",:" } {
+            # for db
+            set keys ":"
+        }
+        append keys [join $keys_list $separator]
+    } else {
+        set keys $keys_list
     }
-    if { $user_id eq "" } {
-        set user_id [ad_conn user_id]
-    }
-    set package_id [ad_conn package_id]
-
-    #set cs_type qc_parameter_get $instance_id ""
-    set cs_type [parameter::get -parameter contactTypesRef -package_id $package_id]
-
-    # Change this SWITCH to whatever other package reference provides a list of contact_ids for user_id
-    # Use accounts-ledger api for default, consider a package parameter for other cases
-    # qal_contact_ids_of_usr_id  (this handles for vendors, contacts, as well as other cases)
-    set contact_id_list [list ]
-    switch $cs_type -- {
-        1 {
-            set customer_id_list [qal_customer_ids_of_user_id $user_id ]
-            set contact_id_list [qal_contact_id_of_customer_id $customer_id_list]
-        }
-        2 {
-            set vendor_id_list [qal_vendor_ids_of_user_id $user_id ]
-            set contact_id_list [qal_contact_id_of_vendor_id $vendor_id_list]
-        }
-        3 {
-            set customer_id_list [qal_customer_ids_of_user_id $user_id ]
-            set c_contact_id_list [qal_contact_id_of_customer_id $customer_id_list]
-
-            set vendor_id_list [qal_vendor_ids_of_user_id $user_id ]
-            set v_contact_id_list [qal_contact_id_of_vendor_id $vendor_id_list]
-
-            set contact_id_list [set_union $c_contact_id_list $v_contact_id_list]
-        } 
-        4 {
-            # all contacts user has access to
-            set contact_id_list [qal_contact_ids_of_user_id $user_id ]
-        }
-   }
-    return $contact_id_list
+    return $keys
 }
 
+ad_proc -public qal_contact_tz {
+    contact_id
+} {
+    Retuns the timezone of the contact. 
+    If not known, will guess based on primary user_id or system default.
+    If timezone exists, will use it instead.
+} {
+    set tz [qal_contact_id_read $contact_id [list timezone user_id]]
+    if { $tz eq "" && [qf_is_natural_number $user_id] } {
+        set tz [lang::user::timezone $user_id]
+    }
+    if { $tz eq "" } {
+        set tz [lang::system::timezone]
+    }
+    return $tz
+}
+
+ad_proc -public qal_timestamp_to_tz {
+    timestamp_any_tz
+    {tz ""}
+    {timestamp_format "%Y-%m-%d %H:%M:%S%z"}
+} {
+    Converts a timestamp to specified timezone. 
+    If timezone (tz) is empty string, converts to connected users's timezone otherwise system's default.
+    If timestamp_format is empty string, uses clock scan's default interpretation.
+} {
+    if { $timestamp_format eq "" } {
+        # let clock scan do a best guess
+        set cs_s [clock scan $timestamp_any_tz]
+    } else {
+        set cs_s [clock scan $timestamp_any_tz -format $timestamp_format]
+    }
+    set yyyymmdd_hhmmss_utc [clock format $cs_s -gmt true]
+    #redundant:
+    # if $tz eq "", set tz \lang::system::timezone 
+    set timestamp_ltz [lc_time_utc_to_local $yyyymmdd_hhmmss_utc $tz]
+    return $timestamp_ltz
+}
