@@ -47,8 +47,6 @@ select acs_object_type__create_type(
 -- data model summary:
 -- contact is the base organization or entity.
 -- A user may have multiple entities, 1 or more of their own, and maybe some roles of others
--- Every vendor requires a contact record
--- Every customer requires a contact record
 -- A contact can have multiple addresses
 -- A user is mapped to their own personal contact record, and maybe others
 
@@ -79,6 +77,7 @@ CREATE TABLE qal_contact (
        billing_addrs_id    integer,
        -- business_id is qal_vendor.vendor_id
        vendor_id           integer,
+       -- customer_id is qal_customer.customer_id
        customer_id         integer,
        taxnumber           varchar(32),
        sic_code            varchar(15),
