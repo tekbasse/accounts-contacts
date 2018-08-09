@@ -50,7 +50,11 @@ ad_proc -public qal_contacts_read {
         # Redo this to grab contact_ids_of_user_id and set_intersect?
         # No, because user may still not have permission to read non_assets.
         # Consider re-working if there is a way to combine multiple db calls.
-        set read_p [qc_permission_p $user_id $contact_id non_assets read $instance_id]
+	# Use the PropertyLabel parameter of the calling package,
+	# if there is one.
+	set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+	
+        set read_p [qc_permission_p $user_id $contact_id $property_label read $instance_id]
         if { $read_p } {
             set rows_lists [db_list_of_lists qal_contact_get "select [qal_contact_keys ","] from qal_contact where id=:contact_id and instance_id=:instance_id and trashed_p!='1'" ]
             # should return only 1 row max
@@ -227,8 +231,8 @@ ad_proc -public qal_addresses_read {
         }
     }
     set rows_lists [list ]
-
-    set read_p [qc_permission_p $user_id $instance_id non_assets read $instance_id]
+    set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+    set read_p [qc_permission_p $user_id $instance_id $property_label read $instance_id]
     if { $read_p } {
 
         set addrs_ids_list [hf_list_filter_by_natural_number $addrs_id_list]
@@ -251,7 +255,7 @@ ad_proc -public qal_addresses_read {
             and addrs_id in ([template::util::tcl_to_sql_list $addrs_ids_list])"]
         set allowed_contact_ids_list [list ]
         foreach cid $vet_contact_ids_list {
-            if { [qc_permission_p $user_id $cid non_assets read $instance_id] } {
+            if { [qc_permission_p $user_id $cid $property_label read $instance_id] } {
                 lappend allowed_contact_ids_list $cid
             }
         }

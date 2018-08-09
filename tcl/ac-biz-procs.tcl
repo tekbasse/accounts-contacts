@@ -320,7 +320,8 @@ ad_proc -public qal_contact_trash {
             set validated_p 0
         }
         if { $validated_p } {
-            set instance_write_p [qc_permission_p $user_id $instance_id non_assets write $instance_id]
+	    set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+            set instance_write_p [qc_permission_p $user_id $instance_id $property_label write $instance_id]
 	    set filtered_contact_id_list [list ]
 	    set filtered_cu_contact_id_list [list ]
 	    set filtered_ve_contact_id_list [list ]
@@ -330,7 +331,7 @@ ad_proc -public qal_contact_trash {
             } else {
                 set at_least_one_write_p 0
                 foreach contact_id $contact_id_list {
-                    if { [qc_permission_p $user_id $contact_id non_assets write $instance_id] } {
+                    if { [qc_permission_p $user_id $contact_id $property_label write $instance_id] } {
                         set at_least_one_write_p 1
                         lappend filtered_contact_id_list $contact_id
 			set cu_ve_id_list [db_list_of_lists customer_id_vendor_id_r1 {
@@ -627,14 +628,15 @@ ad_proc -public qal_customer_trash {
             ns_log Notice "qal_customer_trash.853 validation error. customer_id_list '${customer_id_list}'"
         }
         if { $validated_p } {
-            set instance_write_p [qc_permission_p $user_id $instance_id non_assets write $instance_id]
+	    set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+            set instance_write_p [qc_permission_p $user_id $instance_id $property_label write $instance_id]
             if { $instance_write_p } {
                 set filtered_customer_id_list $customer_id_list
             } else {
                 set filtered_customer_id_list [list ]
                 set at_least_one_write_p 0
                 foreach customer_id $customer_id_list {
-                    if { [qc_permission_p $user_id $customer_id non_assets write $instance_id] } {
+                    if { [qc_permission_p $user_id $customer_id $property_label write $instance_id] } {
                         set at_least_one_write_p 1
                         lappend filtered_customer_id_list $customer_id
                     }
@@ -898,14 +900,15 @@ ad_proc -public qal_vendor_trash {
             ns_log Notice "qal_vendor_trash.853 validation error. vendor_id_list '${vendor_id_list}'"
         }
         if { $validated_p } {
-            set instance_write_p [qc_permission_p $user_id $instance_id non_assets write $instance_id]
+	    set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+            set instance_write_p [qc_permission_p $user_id $instance_id $property_label write $instance_id]
             if { $instance_write_p } {
                 set filtered_vendor_id_list $vendor_id_list
             } else {
                 set filtered_vendor_id_list [list ]
                 set at_least_one_write_p 0
                 foreach vendor_id $vendor_id_list {
-                    if { [qc_permission_p $user_id $vendor_id non_assets write $instance_id] } {
+                    if { [qc_permission_p $user_id $vendor_id $property_label write $instance_id] } {
                         set at_least_one_write_p 1
                         lappend filtered_vendor_id_list $vendor_id
                     }
@@ -1229,14 +1232,15 @@ ad_proc -public qal_address_trash {
             set validated_p 0
         }
         if { $validated_p } {
-            set instance_write_p [qc_permission_p $user_id $instance_id non_assets write $instance_id]
+	    set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+            set instance_write_p [qc_permission_p $user_id $instance_id $property_label write $instance_id]
             if { $instance_write_p } {
                 set filtered_addrs_id_list $addrs_id_list
             } else {
                 set filtered_addrs_id_list [list ]
                 set at_least_one_write_p 0
                 foreach addrs_id $addrs_id_list {
-                    if { [qc_permission_p $user_id $addrs_id non_assets write $instance_id] } {
+                    if { [qc_permission_p $user_id $addrs_id $property_label write $instance_id] } {
                         set at_least_one_write_p 1
                         lappend filtered_addrs_id_list $addrs_id
                     }
