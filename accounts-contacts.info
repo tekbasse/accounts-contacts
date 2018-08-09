@@ -21,7 +21,7 @@
         <callbacks>
         </callbacks>
         <parameters>
-        <!-- No version parameters -->
+            <parameter scope="instance" datatype="string"  min_n_values="1"  max_n_values="1"  name="propertyLabel"  description="Property label used in context of q-control permissions. Default is org_accounts. For other valid choices, see Property column on page q-control/admin/privilege-map" section_name="site-admin"/>
         </parameters>
 
     </version>
