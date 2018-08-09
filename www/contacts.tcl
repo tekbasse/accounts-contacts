@@ -24,4 +24,5 @@ set user_message_list [list ]
 
 set contact_ids_list [qc_contact_ids_for_user $user_id $instance_id]
 
-
+# This page displays a list of contacts, and
+# accepts input to trash or delete one or more contacts.
