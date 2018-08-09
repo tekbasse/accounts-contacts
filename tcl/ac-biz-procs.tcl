@@ -251,6 +251,23 @@ ad_proc -public qal_contact_delete {
                 set validated_p 0
             }
             if { $validated_p } {
+		set cu_ve_id_lists [db_list_of_lists cu_id_ve_id_r_ul "
+		    select customer_id, vendor_id \
+		    from qal_contact \
+		    where instance_id=:instance_id \
+		    and id in ([template::util::tcl_to_sql_list $contact_id_list ] ) "]
+		set filtered_cu_contact_id_list [list ]
+		set filtered_ve_contact_id_list [list ]
+		foreach co_cu_ve_id_list $cu_ve_id_lists {
+		    lassign $co_cu_ve_id_list customer_id vendor_id
+		    if { $customer_id ne "" } {
+			lappend filtered_cu_contact_id_list $contact_id
+		    }
+		    if { $vendor_id ne "" } {
+			lappend filtered_ve_contact_id_list $contact_id
+		    }
+		}
+		
                 db_transaction {
                     db_dml qal_address_ids_delete "delete from qal_address \
                         where id in (select address_id from qal_other_address_map \
@@ -260,16 +277,21 @@ ad_proc -public qal_contact_delete {
                         delete from qal_other_address_map \
                         where instance_id=:instance_id and contact_id in \
                         ([template::util::tcl_to_sql_list $contact_id_list]) "
-                    db_dml qal_customer_ids_delete "delete from qal_customer \
+		    if { [llength $filtered_cu_contact_id_list ] > 0 } {
+			db_dml qal_customer_ids_delete "delete from qal_customer \
                         where instance_id=:instance_id and contact_id in \
-                        ([template::util::tcl_to_sql_list $contact_id_list]) "
-                    db_dml qal_vendor_ids_delete "delete from qal_vendor \
+                        ([template::util::tcl_to_sql_list $filtered_cu_contact_id_list]) "
+		    }
+		    if { [llength $filtered_ve_contact_id_list ] > 0 } {
+			db_dml qal_vendor_ids_delete "delete from qal_vendor \
                         where instance_id=:instance_id and contact_id in \
-                        ([template::util::tcl_to_sql_list $contact_id_list]) "
+                        ([template::util::tcl_to_sql_list $filtered_ve_contact_id_list]) "
+		    }
                     db_dml qal_contact_ids_delete "delete from qal_contact \
                             where instance_id=:instance_id and id in \
                             ([template::util::tcl_to_sql_list $contact_id_list]) "
                 } on_error {
+		    ns_log Error $errmsg
                     set success_p 0
                 }
             } else {
@@ -299,28 +321,30 @@ ad_proc -public qal_contact_trash {
         }
         if { $validated_p } {
             set instance_write_p [qc_permission_p $user_id $instance_id non_assets write $instance_id]
+	    set filtered_contact_id_list [list ]
+	    set filtered_cu_contact_id_list [list ]
+	    set filtered_ve_contact_id_list [list ]
+
             if { $instance_write_p } {
                 set filtered_contact_id_list $contact_id_list
             } else {
-                set filtered_contact_id_list [list ]
-		set filtered_cu_contact_id_list [list ]
-		set filtered_ve_contact_id_list [list ]
                 set at_least_one_write_p 0
                 foreach contact_id $contact_id_list {
                     if { [qc_permission_p $user_id $contact_id non_assets write $instance_id] } {
                         set at_least_one_write_p 1
                         lappend filtered_contact_id_list $contact_id
-			set cu_ve_id_list [db_list_of_lists customer_id_vendor_id_s {
+			set cu_ve_id_list [db_list_of_lists customer_id_vendor_id_r1 {
 			    select customer_id, vendor_id
 			    from qal_contact
-			    where contact_id=:contact_id } ]
+			    where contact_id=:contact_id
+			and instance_id=:instance_id } ]
                     }
 		    lassign $cu_ve_id_list customer_id vendor_id
 		    if { $customer_id ne "" } {
 			lappend filtered_cu_contact_id_list $contact_id
 		    }
 		    if { $vendor_id ne "" } {
-			lappend filtered_ve_contact_id_list $vendor_id
+			lappend filtered_ve_contact_id_list $contact_id
 		    }
                 }
             } 
