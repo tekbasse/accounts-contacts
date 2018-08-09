@@ -12,7 +12,7 @@ aa_register_case -cats {api smoke} -procs {
     qal_address_type_is_postal_q
     qal_namelur
 } qal_entities_check {
-    Test qal entities ie contact+customer+vendor procs for CRUD consistency
+    Test qal entities ie contact procs for CRUD consistency
 } {
     aa_run_with_teardown \
 	-test_code {
