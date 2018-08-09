@@ -7,10 +7,12 @@ set context [list $title]
 
 
 set user_id [add_conn user_id]
-set instance_id [add_conn package_id]
-set property_label [parameter::get \
-			-package_id $instance_id \
-			-parameter property_label \
-			-default "org_accounts" ]
+qc_set_instance_id
+set property_label [qc_parameter_get PropertyLabel $instance_id "org_accounts"]
+
 set read_p [qc_permission_p $user_id "" $property_label read $instance_id]
 		    
+if { $read_p } {
+
+
+    set write_p [qc_permission_p $user_id ""
