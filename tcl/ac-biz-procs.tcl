@@ -303,12 +303,25 @@ ad_proc -public qal_contact_trash {
                 set filtered_contact_id_list $contact_id_list
             } else {
                 set filtered_contact_id_list [list ]
+		set filtered_cu_contact_id_list [list ]
+		set filtered_ve_contact_id_list [list ]
                 set at_least_one_write_p 0
                 foreach contact_id $contact_id_list {
                     if { [qc_permission_p $user_id $contact_id non_assets write $instance_id] } {
                         set at_least_one_write_p 1
                         lappend filtered_contact_id_list $contact_id
+			set cu_ve_id_list [db_list_of_lists customer_id_vendor_id_s {
+			    select customer_id, vendor_id
+			    from qal_contact
+			    where contact_id=:contact_id } ]
                     }
+		    lassign $cu_ve_id_list customer_id vendor_id
+		    if { $customer_id ne "" } {
+			lappend filtered_cu_contact_id_list $contact_id
+		    }
+		    if { $vendor_id ne "" } {
+			lappend filtered_ve_contact_id_list $vendor_id
+		    }
                 }
             } 
             if { $instance_write_p || $at_least_one_write_p } {
@@ -319,20 +332,25 @@ ad_proc -public qal_contact_trash {
                         update qal_other_address_map \
                         set trashed_p='1',trashed_by=:user_id,trashed_ts=now() \
                         where instance_id=:instance_id and contact_id in \
-                        ([template::util::tcl_to_sql_list $contact_id_list]) "
-                    db_dml qal_customer_ids_trash "update qal_customer \
-                        set trashed_p='1',trashed_by=:user_id,trashed_ts=now() \
-                        where instance_id=:instance_id and contact_id in \
-                        ([template::util::tcl_to_sql_list $contact_id_list]) "
-                    db_dml qal_vendor_ids_trash "update qal_vendor \
-                        set trashed_p='1',trashed_by=:user_id,trashed_ts=now() \
-                        where instance_id=:instance_id and contact_id in \
-                        ([template::util::tcl_to_sql_list $contact_id_list]) "
+                        ([template::util::tcl_to_sql_list $filtered_contact_id_list]) "
                     db_dml qal_contact_ids_trash "update qal_contact \
                         set trashed_p='1',trashed_by=:user_id,trashed_ts=now() \
                         where instance_id=:instance_id and trashed_p!='1' and id in \
                         ([template::util::tcl_to_sql_list $filtered_contact_id_list])"
+		    if { [llength $filtered_cu_contact_id_list ] > 0 } {
+			db_dml qal_customer_ids_trash "update qal_customer \
+                        set trashed_p='1',trashed_by=:user_id,trashed_ts=now() \
+                        where instance_id=:instance_id and contact_id in \
+                        ([template::util::tcl_to_sql_list $filtered_cu_contact_id_list]) "
+		    }
+		    if { [llength $filtered_ve_contact_id_list ] > 0 } {
+			db_dml qal_vendor_ids_trash "update qal_vendor \
+                        set trashed_p='1',trashed_by=:user_id,trashed_ts=now() \
+                        where instance_id=:instance_id and contact_id in \
+                        ([template::util::tcl_to_sql_list $filtered_ve_contact_id_list]) "
+		    }
                 } on_error {
+		    ns_log Error ${errmsg}
                     set success_p 0
                 }
             }
