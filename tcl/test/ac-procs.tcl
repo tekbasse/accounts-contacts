@@ -3,11 +3,7 @@ ad_library {
     @creation-date 2017-05-01
 }
 
-aa_register_case -cats {api smoke} qal_entities_check {
-    Test qal entities ie contact+customer+vendor procs for CRUD consistency
-} {
-    aa_run_with_teardown \
-	-procs {
+aa_register_case -cats {api smoke} -procs {
 	    qal_contact_read
 	    qal_contact_write
 	    qal_contact_create
@@ -15,9 +11,13 @@ aa_register_case -cats {api smoke} qal_entities_check {
 	    qal_address_keys
 	    qal_address_type_is_postal_q
 	    qal_namelur
-	} -test_code {
+	} qal_entities_check {
+    Test qal entities ie contact+customer+vendor procs for CRUD consistency
+} {
+    aa_run_with_teardown \
+	-test_code {
             # -rollback \
-                        ns_log Notice "aa_register_case.13: Begin test contact_check"
+			ns_log Notice "aa_register_case.13: Begin test contact_check"
 
                         set instance_id [ad_conn package_id]
                         # use the sysadmin user, because we aren't testing permissions
@@ -93,16 +93,6 @@ aa_register_case -cats {api smoke} qal_entities_check {
                         }
 
                         aa_true "C1  Updated a contact" $co_updated_p
-
-                        set cu2_id [qal_demo_customer_create customer_arr $co_id $user_id]
-                        if { [qf_is_natural_number $cu2_id] && $cu_id eq $cu2_id } {
-                            set cu_updated_p 1
-                        } else {
-                            set cu_updated_p 0
-                            ns_log Notice "qal-procs.tcl.136 co_id '$co_id' co2_id '$co2_id' cu_id '$cu_id' cu2_id '$cu2_id'"
-                        }
-
-                        aa_true "C2  Updated a customer" $cu_updated_p
 
 
                         aa_log "D0  Read and verify each updated value"
