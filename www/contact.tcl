@@ -5,7 +5,7 @@ set context [list $title]
 
 # no contact_id implies new contact
 
-set user_id [add_conn user_id]
+set user_id [ad_conn user_id]
 qc_set_instance_id
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
@@ -29,6 +29,8 @@ qf_get_inputs_as_array input_array
 if { $input_array(qf_write_p) ne 0 } {
     # Compensate for internationalization of value, convert to 1
     set qf_write_p 1
+} else {
+    set qf_write_p 0
 }
 
 set contact_id $input_array(contact_id)
@@ -45,7 +47,10 @@ set qf_write_p [expr { $write_p && $qf_write_p } ]
 
 # Form field definitions
 set f_lol [list \
-	       [list name x datatype string label "x"] \
+	       [list name id $contact_id datatype text] \
+	       [list name label datatype text_nonempty] \
+	       [list name name datatype text_nonempty] \
+	       [list name 
 	      ]
 ##code
 
