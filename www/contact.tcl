@@ -25,17 +25,20 @@ set f_lol [list \
 	      ]
 
 
-# Get input_array.
-# Check to see if edit/add button pressed.
-## NO. this should be an available default feature in qfo_2g
-## when specifying -edit_button_p which sets var qf_edit_p 1 to edit.
-## qf_edit_p is logical && with $write_p: no write, no edit
 
 set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
 
+
+# default set qf_write_p 0
+# Get input_array.
+# If contact_id exists, show the contact if qf_write_p is 0
+# If qf_write_p is 1 and contact_id exists, then edit
+# If contact_id doesn't exist, show form if write_p is 1
+
+# Scope qf_write_p to permissions of write_p
 set qf_write_p [expr { $write_p && $qf_write_p } ]
 
-# add qf_write_p button, with value 1, means edit/add record.
+
 
 
 # Grab contact_id from form_input
@@ -58,17 +61,20 @@ set validated_p [qfo_2g \
 		     -multiple_key_as_list 1 \
 		     -write_p $qf_write_p ]		   
 
-if { !$qf_write_p && $contact_id ne "" } {
+
+if { !$qf_write_p && $contact_id ne "" && $write_p } {
+    # Show button to edit contact record
+    qf_form form_id contact-20180810c action contact
+    qf_input type hidden name contact_id value $contact_id
+    qf_input type submit name submit value "#accounts-contact.edit_contact#"
     # Show buttons to manage addresses
     #
     qf_form form_id contact-20180810a action contact-addresses
     qf_input type hidden name contact_id value $contact_id
-    qf_input type button name "#accounts-contact.manage_street_addresses#" \
-	value 1
+    qf_input type submit name submit value  "#accounts-contact.manage_street_addresses#"
     qf_form form_id contact-20180810b action contact-other-addresses
     qf_input type hidden name contact_id value $contact_id
-    qf_input type button name "#accounts-contact.manage_other_addresses#" \
-	value 1
+    qf_input type submit name submit "#accounts-contact.manage_other_addresses#"
     qf_close
     append content_html [concat [qf_read ] "\n"]
 }
