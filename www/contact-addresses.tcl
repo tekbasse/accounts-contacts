@@ -1,9 +1,12 @@
 set title "Contact'"
 set context [list $title]
 
-# This is the page for modifying and displaying a single contact.
+# This is the page for modifying and displaying addresses of a single contact.
 
-# no contact_id implies new contact
+# no contact_id should result in an error, contact not found.
+
+# Display contact info, and a list of addresses that can be trashed/deleted
+
 
 
 set user_id [add_conn user_id]
