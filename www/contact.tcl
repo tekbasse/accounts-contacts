@@ -19,18 +19,23 @@ if { !$read_p } {
     ad_script_abort
 }
 
-# Form field definitions
-set f_lol [list \
-	       [list name x datatype string label "x"] \
-	      ]
-
-
-
 set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
 
-
-# default set qf_write_p 0
+# defaults
+set input_array(qf_write_p) 0
+set input_array(contact_id) ""
 # Get input_array.
+qf_get_inputs_as_array input_array
+if { $input_array(qf_write_p) ne 0 } {
+    # Compensate for internationalization of value, convert to 1
+    set qf_write_p 1
+}
+
+set contact_id $input_array(contact_id)
+if { $contact_id ne "" } {
+    set contact_list [qal_contact_read $contact_id]
+}
+
 # If contact_id exists, show the contact if qf_write_p is 0
 # If qf_write_p is 1 and contact_id exists, then edit
 # If contact_id doesn't exist, show form if write_p is 1
@@ -38,12 +43,11 @@ set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
 # Scope qf_write_p to permissions of write_p
 set qf_write_p [expr { $write_p && $qf_write_p } ]
 
-
-
-
-# Grab contact_id from form_input
-# If contact_id exists, read record
-
+# Form field definitions
+set f_lol [list \
+	       [list name x datatype string label "x"] \
+	      ]
+##code
 
 
 
@@ -66,7 +70,7 @@ if { !$qf_write_p && $contact_id ne "" && $write_p } {
     # Show button to edit contact record
     qf_form form_id contact-20180810c action contact
     qf_input type hidden name contact_id value $contact_id
-    qf_input type submit name submit value "#accounts-contact.edit_contact#"
+    qf_input type submit name qf_write_p value "#accounts-contact.edit_contact#"
     # Show buttons to manage addresses
     #
     qf_form form_id contact-20180810a action contact-addresses
