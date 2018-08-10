@@ -68,19 +68,34 @@ set validated_p [qfo_2g \
 
 if { !$qf_write_p && $contact_id ne "" && $write_p } {
     # Show button to edit contact record
-    qf_form form_id contact-20180810c action contact
-    qf_input type hidden name contact_id value $contact_id
-    qf_input type submit name qf_write_p value "#accounts-contact.edit_contact#"
+    set b1_ol [list \
+		   name qf_write_p \
+		   value "#accounts-contact.edit_contact#" \
+		   form_id contact-20180810c \
+		   action contact \
+		   name contact_id \
+		   value $contact_id ]
+    append content_html [qf_one_button_form $b1_ol ]
+
     # Show buttons to manage addresses
     #
-    qf_form form_id contact-20180810a action contact-addresses
-    qf_input type hidden name contact_id value $contact_id
-    qf_input type submit name submit value  "#accounts-contact.manage_street_addresses#"
-    qf_form form_id contact-20180810b action contact-other-addresses
-    qf_input type hidden name contact_id value $contact_id
-    qf_input type submit name submit "#accounts-contact.manage_other_addresses#"
-    qf_close
-    append content_html [concat [qf_read ] "\n"]
+    set b2_ol [list \
+		   name submit \
+		   value  "#accounts-contact.manage_street_addresses#" \
+		   form_id contact-20180810a \
+		   action contact-addresses \
+		   name contact_id \
+		   value $contact_id ]
+    append content_html [qf_one_button_form $b2_ol ]
+    set b3_ol [list \
+		   form_id contact-20180810b \
+		   action contact-other-addresses \
+		   name submit \
+		   value "#accounts-contact.manage_other_addresses#" \
+		   name contact_id \
+		   value $contact_id ]
+    append content_html [qf_one_button_form $b3_ol]
+    
 }
 
 
