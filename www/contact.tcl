@@ -1,4 +1,4 @@
-set title "Contact'"
+set title "Contact"
 set context [list $title]
 
 # This is the page for modifying and displaying a single contact.
@@ -41,17 +41,26 @@ if { $contact_id ne "" } {
 # If contact_id exists, show the contact if qf_write_p is 0
 # If qf_write_p is 1 and contact_id exists, then edit
 # If contact_id doesn't exist, show form if write_p is 1
-
+array unset input_array contact_id
+array unset input_array qf_write_p
 # Scope qf_write_p to permissions of write_p
 set qf_write_p [expr { $write_p && $qf_write_p } ]
 
 # Form field definitions
 set f_lol [list \
-	       [list name id $contact_id datatype text] \
-	       [list name label datatype text_nonempty] \
-	       [list name name datatype text_nonempty] \
-	       [list name 
-	      ]
+	       [list name label datatype text_nonempty maxlength 40 label "Label"] \
+	       [list name taxnumber datatype text maxlength 32 label "taxnumber"] \
+	       [list name sic_code datatype text maxlength 15 label "SIC Code"] \
+	       [list name iban datatype text maxlength 34 label "IBAN"] \
+	       [list name bic datatype text maxlength 34 label "BIC"] \
+	       [list name language_code datatype text maxlength 6 "Language Code"] \
+	       [list name currency datatype text maxlength 3 "Currency Code"] \
+	       [list name timezone datatype text size 40 maxlength 100 "Timezone"] \
+	       [list name time_start datatype timestamp label "Time Start"] \
+	       [list name time_end datatype timestamp label "Time End"] \
+	       [list name url datatype url size 40 maxlength 200 label "URL"] \
+	       [list name notes datatype html_text cols 40 rows 5 label "Notes"] ]
+
 ##code
 
 
