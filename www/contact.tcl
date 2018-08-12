@@ -14,7 +14,7 @@ set read_p [qc_permission_p $user_id "" $property_label read $instance_id]
 set content_html ""
 
 if { !$read_p } {
-        set title "#q-control.You_don_t_have_permission#"
+    set title "#q-control.You_don_t_have_permission#"
     ad_return_exception_page 404 $title $title
     ad_script_abort
 }
@@ -84,7 +84,7 @@ if { !$qf_write_p && $write_p } {
     # Show button to edit contact record
     append content_html [qf_button_form \
 			     name qf_write_p \
-			     value "#accounts-contact.edit_contact#" \
+			     value "#accounts-contacts.Edit_contact#" \
 			     id contact-20180810c \
 			     id contact-20180810c \
 			     action contact \
@@ -96,7 +96,7 @@ if { !$qf_write_p && $write_p } {
     #
     append content_html [qf_button_form \
 			     name submit \
-			     value  "#accounts-contact.manage_street_addresses#" \
+			     value  "#accounts-contacts.Manage_street_addresses#" \
 			     id contact-20180810a \
 			     action contact-addresses \
 			     name contact_id \
@@ -106,9 +106,7 @@ if { !$qf_write_p && $write_p } {
 			     id contact-20180810b \
 			     action contact-other-addresses \
 			     name submit \
-			     value "#accounts-contact.manage_other_addresses#" \
+			     value "#accounts-contacts.Manage_other_addresses#" \
 			     name contact_id \
 			     value $contact_id ]
 }
-
-
