@@ -85,7 +85,8 @@ if { !$qf_write_p && $write_p } {
     append content_html [qf_button_form \
 			     name qf_write_p \
 			     value "#accounts-contact.edit_contact#" \
-			     form_id contact-20180810c \
+			     id contact-20180810c \
+			     id contact-20180810c \
 			     action contact \
 			     name contact_id \
 			     value $contact_id ]
@@ -96,13 +97,13 @@ if { !$qf_write_p && $write_p } {
     append content_html [qf_button_form \
 			     name submit \
 			     value  "#accounts-contact.manage_street_addresses#" \
-			     form_id contact-20180810a \
+			     id contact-20180810a \
 			     action contact-addresses \
 			     name contact_id \
 			     value $contact_id ]
 
     append content_html [qf_button_form \
-			     form_id contact-20180810b \
+			     id contact-20180810b \
 			     action contact-other-addresses \
 			     name submit \
 			     value "#accounts-contact.manage_other_addresses#" \

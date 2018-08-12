@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="accounts-contacts" package_version="0.001" locale="en_US" charset="ISO-8859-1">
+<msg key="Add">Add</msg>
+<msg key="Address">Address</msg>
+<msg key="BIC">BIC</msg>
+<msg key="Bcc">Bcc</msg>
+<msg key="Billing_Address">Billing Address</msg>
+<msg key="Cc">Cc</msg>
+<msg key="City">City</msg>
+<msg key="Code">Code</msg>
+<msg key="Company">Company</msg>
+<msg key="Company_Name">Company Name</msg>
+<msg key="Contact">Contact</msg>
+<msg key="Country">Country</msg>
+<msg key="Currency">Currency</msg>
+<msg key="Date">Date</msg>
+<msg key="Date_Format">Date Format</msg>
+<msg key="Edit">Edit</msg>
+<msg key="Email">Email</msg>
+<msg key="Fax">Fax</msg>
+<msg key="Home_Phone">Home Phone</msg>
+<msg key="IBAN">IBAN</msg>
+<msg key="ID">ID</msg>
+<msg key="Manage_other_addresses">Manage other addresses</msg>
+<msg key="Manage_street_addresses">Manage street addresses</msg>
+<msg key="Message">Message</msg>
+<msg key="Mobile">Mobile</msg>
+<msg key="Name">Name</msg>
+<msg key="Notes">Notes</msg>
+<msg key="Phone">Phone</msg>
+<msg key="SIC">SIC</msg>
+<msg key="Shipping_Address">Shipping Address</msg>
+<msg key="delete">Delete</msg>
+<msg key="description">description</msg>
+<msg key="details">Details</msg>
+<msg key="edit">Edit</msg>
+<msg key="Edit_contact">Edit contact</msg>
+</message_catalog>
