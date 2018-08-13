@@ -23,6 +23,7 @@ set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
 
 # defaults
 set input_array(qf_write_p) 0
+set input_array(qf_counter) 0
 set input_array(contact_id) ""
 # Get input_array.
 set form_submitted_p [qf_get_inputs_as_array input_array]
@@ -45,10 +46,21 @@ array unset input_array contact_id
 array unset input_array qf_write_p
 # Scope qf_write_p to permissions of write_p
 set qf_write_p [expr { $write_p && $qf_write_p } ]
+# Following logic won't work, because hash_check might be needed at some point
+#if { $qf_write_p eq 1 } {
+#    set form_submitted_p 0
+#}
+
+# How to force qfo_g2 to present the form,
+# even if validated due to form_submitted_p?
+# One way is to have a form_submission counter.
+# On first form submit, validation is always 0, when write_p is used..
+# Which means we need to know if the variable write_p is referred to exists.
 
 # Form field definitions
 set f_lol [list \
 	       [list name qf_write_p form_tag_type input type hidden value 1 ] \
+	       [list name qf_counter form_tag_type input type hidden value 1 ] \
 	       [list name label datatype text_nonempty maxlength 40 label "Label"] \
 	       [list name taxnumber datatype text maxlength 32 label "taxnumber"] \
 	       [list name sic_code datatype text maxlength 15 label "SIC Code"] \
@@ -70,13 +82,18 @@ set f_lol [list \
 ::qfo::form_list_def_to_array \
     -list_of_lists_name f_lol \
     -fields_ordered_list_name qf_fields_ordered_list \
-    -array_name input_array \
+    -array_name f_arr \
     -ignore_parse_issues_p 0
+
+if { $input_array(qf_counter) < 2 } {
+    set form_submitted_p 0
+}
 
 set validated_p [qfo_2g \
 		     -form_id 20180809 \
 		     -fields_ordered_list $qf_fields_ordered_list \
-		     -fields_array input_array \
+		     -fields_array f_arr \
+		     -inputs_as_array input_array \
 		     -form_submitted_p $form_submitted_p \
 		     -form_varname content_html \
 		     -multiple_key_as_list 1 \
@@ -113,3 +130,7 @@ if { !$qf_write_p && $write_p } {
 			     name contact_id \
 			     value $contact_id ]
 }
+
+ns_log Notice "accounts-contacts/www/contact.tcl array get input_array '[array get input_array]'"
+ns_log Notice "accounts-contacts/www/contact.tcl validated_p '${validated_p}'"
+ns_log Notice "accounts-contacts/www/contact.tcl f_lol '${f_lol}'"
