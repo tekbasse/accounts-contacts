@@ -39,6 +39,10 @@ if { $contact_id ne "" } {
     set contact_list [qal_contact_read $contact_id]
 }
 
+if {[catch { set qf_counter [expr { $input_array(qf_counter) + 1 } ] } ] } {
+    ns_log Warning "accounts-contacts/www/contact.tcl qf_counter + 1 error, qf_counter '${qf_counter}'. Reset to 0"
+    set qf_counter 0
+}
 # If contact_id exists, show the contact if qf_write_p is 0
 # If qf_write_p is 1 and contact_id exists, then edit
 # If contact_id doesn't exist, show form if write_p is 1
@@ -60,7 +64,7 @@ set qf_write_p [expr { $write_p && $qf_write_p } ]
 # Form field definitions
 set f_lol [list \
 	       [list name qf_write_p form_tag_type input type hidden value 1 ] \
-	       [list name qf_counter form_tag_type input type hidden value 1 ] \
+	       [list name qf_counter form_tag_type input type hidden value $qf_counter ] \
 	       [list name label datatype text_nonempty maxlength 40 label "Label"] \
 	       [list name taxnumber datatype text maxlength 32 label "taxnumber"] \
 	       [list name sic_code datatype text maxlength 15 label "SIC Code"] \
@@ -85,7 +89,7 @@ set f_lol [list \
     -array_name f_arr \
     -ignore_parse_issues_p 0
 
-if { $input_array(qf_counter) < 2 } {
+if { $qf_counter < 2 } {
     set form_submitted_p 0
 }
 
