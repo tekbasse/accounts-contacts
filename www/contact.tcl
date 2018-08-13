@@ -25,7 +25,7 @@ set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
 set input_array(qf_write_p) 0
 set input_array(contact_id) ""
 # Get input_array.
-qf_get_inputs_as_array input_array
+set form_submitted_p [qf_get_inputs_as_array input_array]
 if { $input_array(qf_write_p) ne 0 } {
     # Compensate for internationalization of value, convert to 1
     set qf_write_p 1
@@ -48,6 +48,7 @@ set qf_write_p [expr { $write_p && $qf_write_p } ]
 
 # Form field definitions
 set f_lol [list \
+	       [list name qf_write_p form_tag_type input type hidden value 1 ] \
 	       [list name label datatype text_nonempty maxlength 40 label "Label"] \
 	       [list name taxnumber datatype text maxlength 32 label "taxnumber"] \
 	       [list name sic_code datatype text maxlength 15 label "SIC Code"] \
@@ -59,7 +60,8 @@ set f_lol [list \
 	       [list name time_start datatype timestamp label "Time Start"] \
 	       [list name time_end datatype timestamp label "Time End"] \
 	       [list name url datatype url size 40 maxlength 200 label "URL"] \
-	       [list name notes datatype html_text cols 40 rows 5 label "Notes"] ]
+*	       [list name notes datatype html_text cols 40 rows 5 label "Notes"] \
+	      ]
 
 ##code
 
@@ -75,6 +77,7 @@ set validated_p [qfo_2g \
 		     -form_id 20180809 \
 		     -fields_ordered_list $qf_fields_ordered_list \
 		     -fields_array input_array \
+		     -form_submitted_p $form_submitted_p \
 		     -form_varname content_html \
 		     -multiple_key_as_list 1 \
 		     -write_p $qf_write_p ]		   
