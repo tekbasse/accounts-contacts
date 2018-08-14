@@ -135,11 +135,11 @@ ad_proc -public qal_contact_write {
             set url2 ""
         }
         append url2 $url
-        set url2 [ns_absoluteurl $url2 [ad_url]]
+        set url [ns_absoluteurl $url2 [ad_url]]
     } else {
-        set url2 [ns_absoluteurl $url2 [ad_url]]
+        set url [ns_absoluteurl $url [ad_url]]
     }
-    set url [string range $url2 0 198]
+    set url [string range $url 0 198]
 
     if { ![qf_is_natural_number $user_id] } {
         if { [ns_conn isconnected] } {
