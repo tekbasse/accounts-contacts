@@ -76,7 +76,8 @@ set f_lol [list \
 	       [list name time_start datatype timestamp label "Time Start"] \
 	       [list name time_end datatype timestamp label "Time End"] \
 	       [list name url datatype url size 40 maxlength 200 label "URL"] \
-*	       [list name notes datatype html_text cols 40 rows 5 label "Notes"] \
+	       [list name notes datatype html_text cols 40 rows 5 label "Notes"] \
+	       [list type submit name submit value "#acs-kernel.common_Save#" datatype text_nonempty label "" disabled $qf_write_p] \
 	      ]
 
 ##code
