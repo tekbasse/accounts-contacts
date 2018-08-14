@@ -22,7 +22,13 @@ if { !$read_p } {
 set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
 
 # defaults
+foreach k [qal_contact_keys ] {
+    set input_array(${k}) ""
+    set $k ""
+}
 set input_array(contact_id) ""
+set contact_id ""
+
 #
 # If contact_id exists, show the contact if qf_write_p is 0
 # If qf_write_p is 1 and contact_id exists, then edit
@@ -47,7 +53,9 @@ if { $input_array(qf_write_p) ne 0 } {
     set qf_write_p 0
 }
 
-set contact_id $input_array(contact_id)
+if { [qf_is_natural_number $input_array(contact_id) ] } {
+    set contact_id $input_array(contact_id)
+}
 
 if {[catch { set qf_counter [expr { $input_array(qf_counter) + 1 } ] } ] } {
     ns_log Warning "accounts-contacts/www/contact.tcl qf_counter + 1 error, qf_counter '${qf_counter}'. Reset to 0"
@@ -65,37 +73,37 @@ set disabled_p [expr { !$qf_write_p } ]
 if { $qf_counter < 2 } {
     if { $form_submitted_p eq 1 && $qf_counter eq 0 && $contact_id ne "" } {
 	set record_nvl [qal_contact_read $contact_id]
-    }
-    #  id - this is contact_id
-    #  rev_id
-    #  instance_id
-    #  parent_id
-    #  label
-    #  name
-    #  street_addrs_id
-    #  mailing_addrs_id
-    #  billing_addrs_id
-    #  vendor_id
-    #  customer_id
-    #  taxnumber
-    #  sic_code
-    #  iban
-    #  bic
-    #  language_code
-    #  currency
-    #  timezone
-    #  time_start
-    #  time_end
-    #  url
-    #  user_id
-    #  created
-    #  created_by
-    #  trashed_p
-    #  trashed_by
-    #  trashed_ts
-    #  notes 
-    foreach {n v} $record_nvl {
-	set $n $v
+	#  id - this is contact_id
+	#  rev_id *internal
+	#  instance_id
+	#  parent_id
+	#  label
+	#  name
+	#  street_addrs_id
+	#  mailing_addrs_id
+	#  billing_addrs_id
+	#  vendor_id
+	#  customer_id
+	#  taxnumber
+	#  sic_code
+	#  iban
+	#  bic
+	#  language_code
+	#  currency
+	#  timezone
+	#  time_start
+	#  time_end
+	#  url
+	#  user_id *
+	#  created *
+	#  created_by *
+	#  trashed_p *
+	#  trashed_by *
+	#  trashed_ts *
+	#  notes 
+	foreach {n v} $record_nvl {
+	    set $n $v
+	}
     }
     set form_submitted_p 0
     
@@ -103,22 +111,30 @@ if { $qf_counter < 2 } {
 
 
 
-
 set f_lol [list \
 	       [list name qf_write_p form_tag_type input type hidden value 1 ] \
 	       [list name qf_counter form_tag_type input type hidden value $qf_counter ] \
+	       [list name id form_tag_type input type hidden value $contact_id ] \
+	       [list name rev_id form_tag_type input type hidden value $rev_id ] \
+	       [list name instance_id form_tag_type input type hidden value $instance_id ] \
+	       [list name parent_id form_tag_type input type hidden value $parent_id ] \
+	       [list name street_addrs_id form_tag_type input type hidden value $street_addrs_id ] \
+	       [list name mailing_addrs_id form_tag_type input type hidden value $mailing_addrs_id ] \
+	       [list name billing_addrs_id form_tag_type input type hidden value $billing_addrs_id ] \
+	       [list name vendor_id form_tag_type input type hidden value $vendor_id ] \
+	       [list name customer_id form_tag_type input type hidden value $customer_id ] \
 	       [list name label datatype text_nonempty maxlength 40 label "Label" value $label] \
 	       [list name taxnumber datatype text maxlength 32 label "taxnumber" value $taxnumber ] \
-	       [list name sic_code datatype text maxlength 15 label "SIC Code"] \
-	       [list name iban datatype text maxlength 34 label "IBAN"] \
-	       [list name bic datatype text maxlength 34 label "BIC"] \
-	       [list name language_code datatype text maxlength 6 "Language Code"] \
-	       [list name currency datatype text maxlength 3 "Currency Code"] \
-	       [list name timezone datatype text size 40 maxlength 100 "Timezone"] \
-	       [list name time_start datatype timestamp label "Time Start"] \
-	       [list name time_end datatype timestamp label "Time End"] \
-	       [list name url datatype url size 40 maxlength 200 label "URL"] \
-	       [list name notes datatype html_text cols 40 rows 5 label "Notes"] \
+	       [list name sic_code datatype text maxlength 15 label "SIC Code" value $sic_code] \
+	       [list name iban datatype text maxlength 34 label "IBAN" value $iban] \
+	       [list name bic datatype text maxlength 34 label "BIC" value $bic] \
+	       [list name language_code datatype text maxlength 6 "Language Code" value $language_code] \
+	       [list name currency datatype text maxlength 3 "Currency Code" value $currency] \
+	       [list name timezone datatype text size 40 maxlength 100 "Timezone" value $timezone ] \
+	       [list name time_start datatype timestamp label "Time Start" value $time_start ] \
+	       [list name time_end datatype timestamp label "Time End" value $time_end ] \
+	       [list name url datatype url size 40 maxlength 200 label "URL" value $url] \
+	       [list name notes datatype html_text cols 40 rows 5 label "Notes" value $notes] \
 	       [list type submit name submit value "#acs-kernel.common_Save#" datatype text_nonempty label "" disabled $disabled_p] \
 	      ]
 
@@ -175,5 +191,13 @@ ns_log Notice "accounts-contacts/www/contact.tcl array get input_array '[array g
 ns_log Notice "accounts-contacts/www/contact.tcl validated_p '${validated_p}'"
 ns_log Notice "accounts-contacts/www/contact.tcl f_lol '${f_lol}'"
 
-
-
+if { $validated_p } {
+    if { $contact_id ne "" } {
+	qal_contact_create input_array
+    } else {
+	qal_contact_write input_array
+    }
+    rp_form_put contact_id $contact_id
+    rp_internalredirect contact
+    
+}
