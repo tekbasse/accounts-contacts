@@ -3,10 +3,21 @@ set context [list $title]
 
 # This is the page for modifying and displaying a single contact.
 
+# defaults
+foreach k [qal_contact_keys ] {
+    set input_array(${k}) ""
+    set $k ""
+}
+# unset instance_id for qc_set_instance_id
+unset instance_id
+set input_array(contact_id) ""
+set contact_id ""
+
 # no contact_id implies new contact
 
 set user_id [ad_conn user_id]
 qc_set_instance_id
+ns_log Notice "contact.tcl instance_id $instance_id"
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
 set write_p 0
@@ -20,14 +31,6 @@ if { !$read_p } {
 }
 
 set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
-
-# defaults
-foreach k [qal_contact_keys ] {
-    set input_array(${k}) ""
-    set $k ""
-}
-set input_array(contact_id) ""
-set contact_id ""
 
 #
 # If contact_id exists, show the contact if qf_write_p is 0
@@ -195,9 +198,11 @@ if { $validated_p } {
     if { $contact_id ne "" } {
 	qal_contact_create input_array
     } else {
-	qal_contact_write input_array
+	set contact_id [qal_contact_write input_array]
     }
     rp_form_put contact_id $contact_id
-    rp_internalredirect contact
+    rp_form_put qf_counter 0
+    rp_form_put qf_write_p 0
+    rp_internal_redirect contact
     
 }
