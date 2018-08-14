@@ -103,8 +103,6 @@ if { $qf_counter < 2 } {
 
 
 
-##code Should the uneditable values be included in form as hidden types?
-# yes. qf_ paradigm can hide data by default  add it to declarations in qfo_g2 that can be overwritten ofcourse.
 
 set f_lol [list \
 	       [list name qf_write_p form_tag_type input type hidden value 1 ] \
