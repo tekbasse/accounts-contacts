@@ -131,9 +131,9 @@ set f_lol [list \
 	       [list name sic_code datatype text maxlength 15 label "SIC Code" value $sic_code] \
 	       [list name iban datatype text maxlength 34 label "IBAN" value $iban] \
 	       [list name bic datatype text maxlength 34 label "BIC" value $bic] \
-	       [list name language_code datatype text maxlength 6 "Language Code" value $language_code] \
-	       [list name currency datatype text maxlength 3 "Currency Code" value $currency] \
-	       [list name timezone datatype text size 40 maxlength 100 "Timezone" value $timezone ] \
+	       [list name language_code datatype text maxlength 6 label "Language Code" value $language_code] \
+	       [list name currency datatype text maxlength 3 label "Currency Code" value $currency] \
+	       [list name timezone datatype text size 40 maxlength 100 label "Timezone" value $timezone ] \
 	       [list name time_start datatype timestamp label "Time Start" value $time_start ] \
 	       [list name time_end datatype timestamp label "Time End" value $time_end ] \
 	       [list name url datatype url size 40 maxlength 200 label "URL" value $url] \
