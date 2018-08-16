@@ -9,9 +9,12 @@ set content_html ""
 
 set user_id [ad_conn user_id]
 set instance_id [qc_set_instance_id]
-
+ns_log Notice "accounts-contacts/www/contacts.tcl instance_id $instance_id"
 # basic permission check to allow more precise permission error messages
-set read_p [permission::permission_p -party_id $user_id -object_id $instance_id -privilege read]
+
+set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
+
+set read_p [qc_permission_p $user_id "" $property_label read $instance_id]
 
 if { !$read_p } {
     set title "#q-control.You_don_t_have_permission#"
