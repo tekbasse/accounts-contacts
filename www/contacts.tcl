@@ -19,6 +19,13 @@ if { !$read_p } {
     ad_script_abort
 }
 
+set input_array(s) "0"
+set input_array(p) ""
+set input_array(this_start_row) ""
+
+set form_posted_p [qf_get_inputs_as_array input_array]
+
+
 set contact_ids_list [qc_contact_ids_for_user $user_id $instance_id]
 
 set sort_type_list ##code
@@ -40,16 +47,18 @@ set titles_list [list "#accounts_contacts.label#" "#accounts_contacts.name#" "#a
 set sort_type_list [list -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ignore ]
 
 qfo_sp_table_g2 \
-    -nav_prev_links_html_varname nav_prev_html \
     -nav_current_pos_html_varname nav_current_html \
     -nav_next_links_html_varname nav_next_html \
-    -table_lists_varname table_lists \
-    -table_html_varname table_html \
-    -titles_list_varname titles_list \
-    -titles_reordered_html_list_varname titles_reordered_html \
-    -sort_type_list $sort_type_list \
+    -nav_prev_links_html_varname nav_prev_html \
+    -p_varname input_array(p) \
     -s_varname input_array(s) \
-    -p_varname input_array(p) 
+    -sort_type_list $sort_type_list \
+    -table_html_varname table_html \
+    -table_lists_varname table_lists \
+    -this_start_row $input_array(this_start_row) \
+    -titles_list_varname titles_list \
+    -titles_html_list_varname titles_html_list
 
+#append content_html $nav_prev_html $nav_current_html $nav_next_html
 #append content_html $titles_reordered_html
 append content_html $table_html
