@@ -7,8 +7,9 @@ set context [list $title]
 
 set content_html ""
 
-set instance_id [qc_set_instance_id]
 set user_id [ad_conn user_id]
+set instance_id [qc_set_instance_id]
+
 # basic permission check to allow more precise permission error messages
 set read_p [permission::permission_p -party_id $user_id -object_id $instance_id -privilege read]
 
@@ -35,7 +36,7 @@ foreach c_list $contacts_lists {
 }
 
 
-set tites_list [list "#accounts_contacts.label#" "#accounts_contacts.name#" "#accounts_contacts.taxnumber#" "#accounts_contacts.sic_code#" "#accounts_contacts.iban#" "#accounts_contacts.bic#" "#accounts_contacts.language_code#" "#accounts_contacts.currency#" "#accounts_contacts.timezone#" "#accounts_contacts.time_start#" "#accounts_contacts.time_end#" "#accounts_contacts.url#" "#accounts_contacts.notes#" ]
+set titles_list [list "#accounts_contacts.label#" "#accounts_contacts.name#" "#accounts_contacts.taxnumber#" "#accounts_contacts.sic_code#" "#accounts_contacts.iban#" "#accounts_contacts.bic#" "#accounts_contacts.language_code#" "#accounts_contacts.currency#" "#accounts_contacts.timezone#" "#accounts_contacts.time_start#" "#accounts_contacts.time_end#" "#accounts_contacts.url#" "#accounts_contacts.notes#" ]
 set sort_type_list [list -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ignore ]
 
 qfo_sp_table_g2 \
@@ -49,3 +50,6 @@ qfo_sp_table_g2 \
     -sort_type_list $sort_type_list \
     -s_varname input_array(s) \
     -p_varname input_array(p) 
+
+#append content_html $titles_reordered_html
+append content_html $table_html
