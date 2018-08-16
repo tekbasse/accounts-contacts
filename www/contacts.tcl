@@ -1,7 +1,7 @@
-# accounts-contacts/www/tickets.tcl
+# accounts-contacts/www/contacts.tcl
 
 
-set title "#accounts-contacts.contact#"
+set title "#accounts-contacts.contacts#"
 set context [list $title]
 
 
@@ -12,17 +12,25 @@ set user_id [ad_conn user_id]
 # basic permission check to allow more precise permission error messages
 set read_p [permission::permission_p -party_id $user_id -object_id $instance_id -privilege read]
 
-#qc_permission_p user_id contact_id property_label privilege instance_id 
-#set read_p \[qc_permission_p $user_id $contact_id non_assets read $instance_id\]
-#set create_p \[qc_permission_p $user_id $contact_id non_assets create $instance_id\]
-#set write_p \[qc_permission_p $user_id $contact_id non_assets write $instance_id\]
-#set admin_p \[qc_permission_p $user_id $contact_id non_assets admin $instance_id\]
-#set delete_p \[qc_permission_p  $user_id $contact_id non_assets delete $instance_id\]
-
-set user_message_list [list ]
-
+if { !$read_p } {
+    set title "#q-control.You_don_t_have_permission#"
+    ad_return_exception_page 404 $title $title
+    ad_script_abort
+}
 
 set contact_ids_list [qc_contact_ids_for_user $user_id $instance_id]
 
-# This page displays a list of contacts, and
-# accepts input to trash or delete one or more contacts.
+set sort_type_list ##code
+set table_lists ##
+
+qfo_sp_table_g2 \
+    -nav_prev_links_html_varname nav_prev_html \
+    -nav_current_pos_html_varname nav_current_html \
+    -nav_next_links_html_varname nav_next_html \
+    -table_lists_varname table_lists \
+    -table_html_varname table_html \
+    -titles_list_varname titles_list \
+    -titles_reordered_html_list_varname titles_reordered_html \
+    -sort_type_list $sort_type_list
+    -s_varname input_array(s) \
+    -p_varname input_array(p) 
