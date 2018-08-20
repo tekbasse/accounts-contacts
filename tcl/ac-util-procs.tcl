@@ -140,6 +140,13 @@ ad_proc -public qal_contact_ids_of_user_id {
     # Since q-control is a required package, 
     # query the q-control map directly.
 
+    ###code
+    # THis is wrong use of qc_user_roles_map
+    # qal_contact_id in qc_user_roles_map refers to the controlling
+    # entity of user_id
+    # whereas contact_ids of user_id
+    # refers to the contact_ids of user_id from qc_user_roles_map,
+    # and the contact_ids of each of those contact_ids...
     set contact_id_list [db_list qal_contact_user_map_read_ids {
         select distinct qal_contact_id from qc_user_roles_map
         where instance_id=:instance_id

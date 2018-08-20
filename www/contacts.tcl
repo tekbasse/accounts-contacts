@@ -28,6 +28,7 @@ set input_array(this_start_row) ""
 
 set form_posted_p [qf_get_inputs_as_array input_array]
 
+ns_log Notice "accounts-contacts/www/contacts.tcl instance_id ${instance_id} user_id '${user_id}' property_label '${property_label}'"
 
 set contact_ids_list [qc_contact_ids_for_user $user_id $instance_id]
 
