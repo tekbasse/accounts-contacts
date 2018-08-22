@@ -1,7 +1,7 @@
 # accounts-contacts/www/contacts.tcl
 
 
-set title "#accounts-contacts.contacts#"
+set title "#accounts-contacts.Contacts#"
 set context [list $title]
 
 

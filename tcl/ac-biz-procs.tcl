@@ -30,7 +30,9 @@ ad_proc -public qal_contact_create {
     # at a minimum, object_id needs to be used to prevent id collision with other packages:
 
     set c_arr(id) ""
+    ns_log Notice "qal_contact_create.33 array get c_arr '[array get c_arr]'"
     set id [qal_contact_write c_arr]
+    ns_log Notice "qal_contact_create.35 id '${id}"
     return $id
 }
 
@@ -51,7 +53,7 @@ ad_proc -public qal_contact_write {
     set error_p 0
     qal_contact_defaults a_arr
     qf_array_to_vars a_arr [qal_contact_keys]
-
+    ns_log Notice "qal_contact_write.56 start"
     set a_arr(contact_id) ""
 
     # validations etc
@@ -224,8 +226,10 @@ ad_proc -public qal_contact_write {
             }
             db_dml qal_contact_create_1 "insert into qal_contact \
  ([qal_contact_keys ","]) values ([qal_contact_keys ",:"])"
+
         }
     }
+    ns_log Notice "qal_contact_write.229 id '${id}' label '${label}'"
     return $id
 }
 
