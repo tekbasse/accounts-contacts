@@ -18,7 +18,14 @@ CREATE TABLE qal_contact_object_id_map (
        object_id integer unique not null,
        instance_id integer,
 
-       -- For now, contact_id is the same as object_id. See qal_contact table.
+       -- For now, contact_id is the same as object_id.
+       -- This prevents id collision between qal_id, qc_id and object_id,
+       -- since id's of contact_id may be mixed with instance_id and
+       -- group_id and other parts of OpenACS object_id system.
+       -- This also should simplify any translation of q-control
+       -- permissions to translate into and use the more scalable
+       -- OpenACS permissions.
+       --See qal_contact table.
        -- acs_object_type__create_type needs an external table.
        contact_id integer,
        -- A contact party has a subgroup that contact users are assigned to.
@@ -52,9 +59,11 @@ select acs_object_type__create_type(
 
 --part of company_dates, company_details
 CREATE TABLE qal_contact (
-       -- id ie party_id ie object_id. This is to avoid id collision with inter-package use cases,
+       -- id ie party_id ie object_id.
+       -- This is to avoid id collision with inter-package use cases,
        -- such as with contact-support package and this one.
-       -- In general, it is a good idea to link an object_id to each contact anyway,
+       -- In general,
+       -- it is a good idea to link an object_id to each contact anyway,
        -- in case conventional openacs group permissions are used.
        -- set id group::new -context_id $instance_id -group_name $label -pretty_name $name
        -- aka contact_id
@@ -64,7 +73,8 @@ CREATE TABLE qal_contact (
        rev_id              integer default nextval('qal_id'),
        instance_id         integer not null,
        -- for some aggregate reporting, a parent_id may be useful. 
-       -- However, each contact is considered a separate entity for permissions etc.
+       -- However,
+       -- each contact is considered a separate entity for permissions etc.
        parent_id           integer,
        -- label is expected to be unique to an instance_id
        label               varchar(40),
