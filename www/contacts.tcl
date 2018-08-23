@@ -9,12 +9,15 @@ set content_html ""
 
 set user_id [ad_conn user_id]
 set instance_id [qc_set_instance_id]
+# in accounts-contacts, differentiate org_contact_id from contact_id
+set org_contact_id [qc_set_contact_id ]
+
 
 # basic permission check to allow more precise permission error messages
 
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
-set read_p [qc_permission_p $user_id "" $property_label read $instance_id]
+set read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
 
 if { !$read_p } {
     set title "#q-control.You_don_t_have_permission#"

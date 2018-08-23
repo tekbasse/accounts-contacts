@@ -17,11 +17,13 @@ set contact_id ""
 
 set user_id [ad_conn user_id]
 qc_set_instance_id
+# in accounts-contacts, differentiate org_contact_id from contact_id
+set org_contact_id [qc_set_contact_id ]
 ns_log Notice "contact.tcl instance_id $instance_id"
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
 set write_p 0
-set read_p [qc_permission_p $user_id "" $property_label read $instance_id]
+set read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
 set content_html ""
 
 if { !$read_p } {
@@ -30,7 +32,7 @@ if { !$read_p } {
     ad_script_abort
 }
 
-set write_p [qc_permission_p $user_id "" $property_label write $instance_id]
+set write_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
 
 #
 # If contact_id exists, show the contact if qf_write_p is 0
