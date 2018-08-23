@@ -6,12 +6,15 @@ ad_library {
 
 ad_proc -public qal_contact_read {
     contact_id
+    org_contact_id
 } {
     Returns a name value list of one contact record, or empty list if none found.
+    @param contact_id
+    @param org_contact_id (of contacts) from qc_set_contact_id
 } {
     upvar 1 instance_id instance_id
     upvar 1 user_id user_id
-    set return_lists [qal_contacts_read [list $contact_id]]
+    set return_lists [qal_contacts_read [list $contact_id] $org_contact_id]
     # list is in order of qal_contact_keys
     set return_val_list [lindex $return_lists 0]
     set return_list [list ]
@@ -28,6 +31,72 @@ ad_proc -public qal_contact_read {
 }
 
 ad_proc -public qal_contacts_read {
+    contact_id_list
+    org_contact_id
+} {
+    Returns list of lists; Each list is an contact record for each contact_id in contact_id_list as a list of field (key) values. Returns an empty list if none found.
+    
+    @param contact_id_list
+    @param org_contact_id (of contacts) from qc_set_contact_id
+
+} {
+    upvar 1 instance_id instance_id
+    upvar 1 user_id user_id
+    if { ![info exists user_id] } {
+        if { [ns_conn isconnected] } {
+            set user_id [ad_conn user_id]
+        } else {
+            set user_id ""
+        }
+    }
+    set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]    
+    set read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
+    set contact_ids_list [hf_list_filter_by_natural_number $contact_id_list]
+    set return_lists [list ]
+    if { $read_p } {
+	foreach contact_id $contact_ids_list {
+            set rows_lists [db_list_of_lists qal_contact_get "select [qal_contact_keys ","] from qal_contact where id=:contact_id and instance_id=:instance_id and trashed_p!='1'" ]
+            if { [llength $row_list] > 0 } {
+		# should return only 1 row max
+		if { [llength $rows_lists ] > 1 } {
+		    ns_log Warning "qal_contacts_read.58 multiple rows found for contact_id '${contact_id}'"
+		    set row_list [lindex $rows_lists 0]
+		}
+		lappend return_lists $row_list
+            }
+	}
+    } else {
+	ns_log Notice "qal_contacts_read.66: read_p '${read_p}' for user_id '${user_id}' instance_id '${instance_id}' contact_id '${contact_id}'"
+    }
+    return $return_lists
+}
+
+
+
+ad_proc -public qal_sub_contact_read {
+    contact_id
+} {
+    Returns a name value list of one contact record, or empty list if none found.
+} {
+    upvar 1 instance_id instance_id
+    upvar 1 user_id user_id
+    set return_lists [qal_sub_contacts_read [list $contact_id]]
+    # list is in order of qal_contact_keys
+    set return_val_list [lindex $return_lists 0]
+    set return_list [list ]
+    if { [llength $return_val_list] > 0 } {
+        set keys_list [qal_contact_keys]
+        set i 0
+        foreach key $keys_list {
+            set val [lindex $return_val_list $i]
+            lappend return_list $key $val
+            incr i
+        }
+    }
+    return $return_list
+}
+
+ad_proc -public qal_sub_contacts_read {
     contact_id_list
 } {
     Returns list of lists; Each list is an contact record for each contact_id in contact_id_list as a list of field (key) values. Returns an empty list if none found.
@@ -57,9 +126,13 @@ ad_proc -public qal_contacts_read {
         set read_p [qc_permission_p $user_id $contact_id $property_label read $instance_id]
         if { $read_p } {
             set rows_lists [db_list_of_lists qal_contact_get "select [qal_contact_keys ","] from qal_contact where id=:contact_id and instance_id=:instance_id and trashed_p!='1'" ]
-            # should return only 1 row max
-            set row_list [lindex $rows_lists 0]
-            if { [llength $row_list] > 0 } {
+	    set row_list_len [llength $row_list]
+            if { $row_list_len > 0 } {
+		# should return only 1 row max
+		if { $row_list_len > 1 } {
+		    set row_list [lindex $rows_lists 0]
+		    ns_log Warning "qal_contacts_read.58 multiple rows found for contact_id '${contact_id}'"
+		}
                 lappend return_lists $row_list
             }
         } else {

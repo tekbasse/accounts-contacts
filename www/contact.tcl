@@ -77,7 +77,7 @@ set disabled_p [expr { !$qf_write_p } ]
 
 if { $qf_counter < 2 } {
     if { $form_submitted_p eq 1 && $qf_counter eq 0 && $contact_id ne "" } {
-	set record_nvl [qal_contact_read $contact_id]
+	set record_nvl [qal_contact_read $contact_id $org_contact_id]
 	#  id - this is contact_id
 	#  rev_id *internal
 	#  instance_id

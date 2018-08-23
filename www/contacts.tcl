@@ -35,7 +35,7 @@ ns_log Notice "accounts-contacts/www/contacts.tcl instance_id ${instance_id} use
 
 set contact_ids_list [qc_contact_ids_for_user $user_id $instance_id]
 
-set contacts_lists [qal_contacts_read $contact_ids_list ]
+set contacts_lists [qal_contacts_read $contact_ids_list $org_contact_id]
 ns_log Notice "accounts-contacts/www/contacts.tcl instance_id ${instance_id} contact_ids_list '${contact_ids_list}' contacts_lists '${contacts_lists}'"
 
 # ordered list:
