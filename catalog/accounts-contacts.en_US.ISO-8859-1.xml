@@ -36,4 +36,17 @@
 <msg key="details">Details</msg>
 <msg key="edit">Edit</msg>
 <msg key="Edit_contact">Edit contact</msg>
+<msg key="label">Label</msg>
+<msg key="name">Name</msg>
+<msg key="taxnumber">Tax Number</msg>
+<msg key="sic_code">SIC Code</msg>
+<msg key="iban">IBAN</msg>
+<msg key="bic">BIC</msg>
+<msg key="language_code">Langauge Code</msg>
+<msg key="currency">Currency</msg>
+<msg key="timezone">Time Zone</msg>
+<msg key="time_start">Time Start</msg>
+<msg key="time_end">Time End</msg>
+<msg key="url">URL</msg>
+<msg key="notes">Notes</msg>
 </message_catalog>
