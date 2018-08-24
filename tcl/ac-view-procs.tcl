@@ -52,19 +52,11 @@ ad_proc -public qal_contacts_read {
     set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]    
     set read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
     set contact_ids_list [hf_list_filter_by_natural_number $contact_id_list]
+    set contact_ids_ct [llength $contact_ids_list]
     set return_lists [list ]
-    if { $read_p } {
-	foreach contact_id $contact_ids_list {
-            set rows_lists [db_list_of_lists qal_contact_get "select [qal_contact_keys ","] from qal_contact where id=:contact_id and instance_id=:instance_id and trashed_p!='1'" ]
-            if { [llength $row_list] > 0 } {
-		# should return only 1 row max
-		if { [llength $rows_lists ] > 1 } {
-		    ns_log Warning "qal_contacts_read.58 multiple rows found for contact_id '${contact_id}'"
-		    set row_list [lindex $rows_lists 0]
-		}
-		lappend return_lists $row_list
-            }
-	}
+    if { $read_p && $contact_ids_ct > 0 } {
+
+	set rows_lists [db_list_of_lists qal_contact_get "select [qal_contact_keys ","] from qal_contact where id in ([template::util::tcl_to_sql_list $contact_ids_list]) and instance_id=:instance_id and trashed_p!='1'" ]
     } else {
 	ns_log Notice "qal_contacts_read.66: read_p '${read_p}' for user_id '${user_id}' instance_id '${instance_id}' contact_id '${contact_id}'"
     }

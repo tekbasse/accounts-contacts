@@ -31,9 +31,9 @@ set input_array(this_start_row) ""
 
 set form_posted_p [qf_get_inputs_as_array input_array]
 
-ns_log Notice "accounts-contacts/www/contacts.tcl instance_id ${instance_id} user_id '${user_id}' property_label '${property_label}'"
+ns_log Notice "accounts-contacts/www/contacts.tcl instance_id ${instance_id} org_contact_id '${org_contact_id}' user_id '${user_id}' property_label '${property_label}'"
 
-set contact_ids_list [qc_contact_ids_for_user $user_id $instance_id]
+set contact_ids_list [qal_contact_ids ]
 
 set contacts_lists [qal_contacts_read $contact_ids_list $org_contact_id]
 ns_log Notice "accounts-contacts/www/contacts.tcl instance_id ${instance_id} contact_ids_list '${contact_ids_list}' contacts_lists '${contacts_lists}'"

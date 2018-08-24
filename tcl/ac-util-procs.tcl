@@ -123,34 +123,18 @@ ad_proc -public qal_vendor_id_from_code {
 }
 
 
-ad_proc -public qal_contact_ids_of_user_id {
-    user_id
+ad_proc -public qal_contact_ids {
 } {
-    Returns contact_id(s) of user_id, or empty string if none found.
+    Returns contact_id(s) for contact_id, or empty string if none found.
 } {
     upvar 1 instance_id instance_id
-    # Orignally, designed to use:
-    # 
-    # select contact_id from qal_contact_user_map 
-    #   where instance_id=:instance_id
-    #   and user_id=:user_id
-    #   and trashed_p!='1' 
-    # 
-    # However, this is not consistent with q-control.
-    # Since q-control is a required package, 
-    # query the q-control map directly.
-
-    ###code
-    # THis is wrong use of qc_user_roles_map
-    # qal_contact_id in qc_user_roles_map refers to the controlling
-    # entity of user_id
-    # whereas contact_ids of user_id
-    # refers to the contact_ids of user_id from qc_user_roles_map,
-    # and the contact_ids of each of those contact_ids...
-    set contact_id_list [db_list qal_contact_user_map_read_ids {
-        select distinct qal_contact_id from qc_user_roles_map
+    # Was: qal_contact_ids_of_user_id
+    # but that function has been deligated to qc_contact_ids_of_user_id
+    # qal_contact_ids returns all contact_ids for org_contact_id
+    set contact_id_list [db_list qal_contact_ids_rn {
+        select id from qal_contact
         where instance_id=:instance_id
-        and user_id=:user_id} ]
+        and trashed_p!='1' } ]
     return $contact_id_list
 }
 
