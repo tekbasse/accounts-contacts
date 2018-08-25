@@ -7,6 +7,7 @@ set context [list $title]
 
 set content_html ""
 
+
 set user_id [ad_conn user_id]
 set instance_id [qc_set_instance_id]
 # in accounts-contacts, differentiate org_contact_id from contact_id
@@ -67,6 +68,6 @@ qfo_sp_table_g2 \
     -titles_list_varname titles_list \
     -titles_html_list_varname titles_html_list
 
-#append content_html $nav_prev_html $nav_current_html $nav_next_html
-#append content_html $titles_reordered_html
+append content_html $nav_prev_html "&nbsp;" $nav_current_html "&nbsp;" $nav_next_html
+append content_html {</br><a href="contacts">#acs-kernel.common_reset#</a>}
 append content_html $table_html
