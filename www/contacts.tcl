@@ -69,5 +69,8 @@ qfo_sp_table_g2 \
     -titles_html_list_varname titles_html_list
 
 append content_html $nav_prev_html "&nbsp;" $nav_current_html "&nbsp;" $nav_next_html
-append content_html {</br><a href="contacts">#acs-kernel.common_reset#</a>}
+set br [qf_element tag br]
+append content_html $br $br
+append content_html {<a href="contacts">#acs-kernel.common_reset#</a>}
+append content_html $br $br
 append content_html $table_html
