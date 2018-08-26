@@ -67,7 +67,9 @@ if { $input_array(qf_write_p) ne 0 } {
     set qf_write_p 0
 }
 
-if { [qf_is_natural_number $input_array(contact_id) ] } {
+if { [qf_is_natural_number $input_array(id) ] } {
+    set contact_id $input_array(contact_id)
+} elseif { [qf_is_natural_number $input_array(contact_id) ] } {
     set contact_id $input_array(contact_id)
 }
 
@@ -83,7 +85,10 @@ set qf_write_p [expr { $write_p && $qf_write_p } ]
 
 # Form field definitions
 set disabled_p [expr { !$qf_write_p } ]
-ns_log Notice "contact.tcl.71 contact_id '${contact_id}' qf_write_p '${qf_write_p}' disabled_p '${disabled_p}' qf_counter '${qf_counter}' form_submitted_p '${form_submitted_p}' instance_id '${instance_id}'"
+
+ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
+
+ns_log Notice "contact.tcl.73 qf_write_p '${qf_write_p}' disabled_p '${disabled_p}' qf_counter '${qf_counter}' form_submitted_p '${form_submitted_p}' instance_id '${instance_id}'"
 if { $qf_counter < 2 } {
     if { $form_submitted_p eq 1 && $qf_counter < 2 && $contact_id ne "" } {
 
