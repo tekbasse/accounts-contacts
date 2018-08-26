@@ -3,22 +3,29 @@ set context [list $title]
 
 # This is the page for modifying and displaying a single contact.
 
+# unset instance_id for qc_set_instance_id
+#unset instance_id
+
+set user_id [ad_conn user_id]
+qc_set_instance_id
+
+# in accounts-contacts, differentiate org_contact_id from contact_id
+set org_contact_id [qc_set_contact_id ]
+# contact_id is upvar'd by qc_set_instance_id. Here, we don't want it.
+unset contact_id
+##code in future, mac qc_set_instance_id upvar a declared name..??
+
 # defaults
 foreach k [qal_contact_keys ] {
     set input_array(${k}) ""
     set $k ""
 }
-# unset instance_id for qc_set_instance_id
-unset instance_id
+
 set input_array(contact_id) ""
-set contact_id ""
+
 
 # no contact_id implies new contact
 
-set user_id [ad_conn user_id]
-qc_set_instance_id
-# in accounts-contacts, differentiate org_contact_id from contact_id
-set org_contact_id [qc_set_contact_id ]
 ns_log Notice "contact.tcl instance_id $instance_id"
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
