@@ -22,8 +22,8 @@
   <msg key="Home_Phone">Home Phone</msg>
   <msg key="IBAN">IBAN</msg>
   <msg key="ID">ID</msg>
-  <msg key="Manage_other_addresses">Manage other addresses</msg>
-  <msg key="Manage_street_addresses">Manage street addresses</msg>
+  <msg key="Other_addresses">Other addresses</msg>
+  <msg key="Street_addresses">Street addresses</msg>
   <msg key="Message">Message</msg>
   <msg key="Mobile">Mobile</msg>
   <msg key="Name">Name</msg>

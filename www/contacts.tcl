@@ -75,4 +75,8 @@ set br [qf_element tag br]
 append content_html $br $br
 append content_html {<a href="contacts">#acs-kernel.common_reset#</a>}
 append content_html $br $br
+
 append content_html $table_html
+
+append content_html $br $br
+append content_html {<a href="contact">#accounts-contacts.Add#</a>}

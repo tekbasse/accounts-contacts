@@ -45,8 +45,8 @@ if { !$read_p } {
 set write_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
 
 #
-# If contact_id exists, show the contact if qf_write_p is 0
-# If qf_write_p is 1 and contact_id exists, then edit
+# If contact_id exists, and if qf_write_p is 0 , then show contact
+# If contact_id exists, and if qf_write_p is 1 , then edit contact
 # If contact_id doesn't exist, show form if write_p is 1
 set input_array(qf_write_p) 0
 # If qf_trash_p is not 0 , trash contact_id
@@ -84,11 +84,11 @@ set qf_archive_p $input_array(qf_archive_p)
 set qf_trash_p $input_array(qf_trash_p)
 
 if { [qf_is_natural_number $input_array(id) ] } {
-    set contact_id $input_array(contact_id)
+    set contact_id $input_array(id)
 } elseif { [qf_is_natural_number $input_array(contact_id) ] } {
     set contact_id $input_array(contact_id)
 }
-
+ns_log Notice "accounts-contacts/www/contact.tcl.91 contact_id '${contact_id}'"
 if {[catch { set qf_counter [expr { $input_array(qf_counter) + 1 } ] } ] } {
     ns_log Warning "accounts-contacts/www/contact.tcl qf_counter + 1 error, qf_counter '${qf_counter}'. Reset to 0"
     set qf_counter 0
@@ -108,9 +108,9 @@ ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
 
 ns_log Notice "contact.tcl.73 qf_write_p '${qf_write_p}' disabled_p '${disabled_p}' qf_counter '${qf_counter}' form_submitted_p '${form_submitted_p}' instance_id '${instance_id}'"
 if { $qf_counter < 2 } {
-    set form_submitted_p 0
+
     if { $form_submitted_p eq 1 && $qf_counter < 2 && $contact_id ne "" } {
-	
+	set form_submitted_p 0	
 	if { $qf_trash_p } {
 	    set success_p [qal_contact_trash $contact_id]
 	} else { 
@@ -228,10 +228,11 @@ set validated_p [qfo_2g \
 
 if { !$qf_write_p && $write_p } {
     if { $contact_id ne "" } {
+
 	# Show button to edit contact record
 	append content_html [qf_button_form \
 				 name qf_write_p \
-				 value "#accounts-contacts.Edit_contact#" \
+				 value "#accounts-contacts.Edit#" \
 				 id contact-20180810c \
 				 id contact-20180810c \
 				 action contact \
@@ -241,7 +242,7 @@ if { !$qf_write_p && $write_p } {
 	# Show button to archive contact record
 	append content_html [qf_button_form \
 				 name qf_archive_p \
-				 value "#accounts-contacts.Archive_contact#" \
+				 value "#accounts-contacts.Archive#" \
 				 id contact-20180826a \
 				 id contact-20180826a \
 				 action contact \
@@ -251,7 +252,7 @@ if { !$qf_write_p && $write_p } {
 	# Show button to trash contact record
 	append content_html [qf_button_form \
 				 name qf_trash_p \
-				 value "#accounts-contacts.Trash_contact#" \
+				 value "#accounts-contacts.Trash#" \
 				 id contact-20180826b \
 				 id contact-20180826b \
 				 action contact \
@@ -260,19 +261,20 @@ if { !$qf_write_p && $write_p } {
 	
 	# Show buttons to manage addresses
 	#
+	append content_html "<h2>#accounts-contacts.Street_addresses#</h2>"
 	append content_html [qf_button_form \
 				 name submit \
-				 value  "#accounts-contacts.Manage_street_addresses#" \
+				 value "#acs-kernel.common_View#" \
 				 id contact-20180810a \
 				 action contact-addresses \
 				 name contact_id \
 				 value $contact_id ]
-	
+	append content_html "<h2>#accounts-contacts.Other_addresses#</h2>"
 	append content_html [qf_button_form \
 				 id contact-20180810b \
 				 action contact-other-addresses \
 				 name submit \
-				 value "#accounts-contacts.Manage_other_addresses#" \
+				 value "#acs-kernel.common_View#" \
 				 name contact_id \
 				 value $contact_id ]
     }
