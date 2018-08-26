@@ -285,10 +285,12 @@ ns_log Notice "accounts-contacts/www/contact.tcl validated_p '${validated_p}'"
 ns_log Notice "accounts-contacts/www/contact.tcl f_lol '${f_lol}'"
 
 if { $validated_p } {
-    if { $contact_id ne "" } {
+    if { $contact_id eq "" } {
 	qal_contact_create input_array
+	ns_log Notice "accounts-contacts/www/contact.tcl creating contact: array get input_array '[array get input_array]'"
     } else {
 	set contact_id [qal_contact_write input_array]
+	ns_log Notice "accounts-contacts/www/contact.tcl writing contact_id '${contact_id}': array get input_array '[array get input_array]'"
     }
     rp_form_put contact_id $contact_id
     rp_form_put qf_counter 0
