@@ -55,7 +55,6 @@ ad_proc -public qal_contacts_read {
     set contact_ids_ct [llength $contact_ids_list]
     set return_lists [list ]
     if { $read_p && $contact_ids_ct > 0 } {
-
 	set return_lists [db_list_of_lists qal_contact_get "select [qal_contact_keys ","] from qal_contact where id in ([template::util::tcl_to_sql_list $contact_ids_list]) and instance_id=:instance_id and trashed_p!='1'" ]
     } else {
 	ns_log Notice "qal_contacts_read.66: read_p '${read_p}' for user_id '${user_id}' instance_id '${instance_id}' contact_id '${contact_id}'"

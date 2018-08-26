@@ -5,28 +5,30 @@ set context [list $title]
 
 # unset instance_id for qc_set_instance_id
 #unset instance_id
-
-set user_id [ad_conn user_id]
-qc_set_instance_id
-
-# in accounts-contacts, differentiate org_contact_id from contact_id
-set org_contact_id [qc_set_contact_id ]
-# contact_id is upvar'd by qc_set_instance_id. Here, we don't want it.
-unset contact_id
-##code in future, mac qc_set_instance_id upvar a declared name..??
-
 # defaults
 foreach k [qal_contact_keys ] {
     set input_array(${k}) ""
     set $k ""
 }
 
+set user_id [ad_conn user_id]
+unset instance_id
+qc_set_instance_id
+ns_log Notice "contact.tcl.11 instance_id '${instance_id}'"
+# in accounts-contacts, differentiate org_contact_id from contact_id
+set org_contact_id [qc_set_contact_id ]
+ns_log Notice "contact.tcl.14 instance_id '${instance_id}'"
+# contact_id is upvar'd by qc_set_instance_id. Here, we don't want it.
+unset contact_id
+##code in future, mac qc_set_instance_id upvar a declared name..??
+
+
 set input_array(contact_id) ""
 
 
 # no contact_id implies new contact
 
-ns_log Notice "contact.tcl instance_id $instance_id"
+ns_log Notice "contact.tcl.30 instance_id '${instance_id}'"
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
 set write_p 0
@@ -81,10 +83,12 @@ set qf_write_p [expr { $write_p && $qf_write_p } ]
 
 # Form field definitions
 set disabled_p [expr { !$qf_write_p } ]
-
+ns_log Notice "contact.tcl.71 contact_id '${contact_id}' qf_write_p '${qf_write_p}' disabled_p '${disabled_p}' qf_counter '${qf_counter}' form_submitted_p '${form_submitted_p}' instance_id '${instance_id}'"
 if { $qf_counter < 2 } {
-    if { $form_submitted_p eq 1 && $qf_counter eq 0 && $contact_id ne "" } {
+    if { $form_submitted_p eq 1 && $qf_counter < 2 && $contact_id ne "" } {
+
 	set record_nvl [qal_contact_read $contact_id $org_contact_id]
+	ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
 	#  id - this is contact_id
 	#  rev_id *internal
 	#  instance_id
