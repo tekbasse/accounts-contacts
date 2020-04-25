@@ -20,6 +20,7 @@
   <msg key="Edit">Edit</msg>
   <msg key="Edit_contact">Edit contact</msg>
   <msg key="Email">Email</msg>
+  <msg key="Enddate">Enddate</msg>
   <msg key="Fax">Fax</msg>
   <msg key="Home_Phone">Home Phone</msg>
   <msg key="IBAN">IBAN</msg>
@@ -32,6 +33,7 @@
   <msg key="Phone">Phone</msg>
   <msg key="SIC">SIC</msg>
   <msg key="Shipping_Address">Shipping Address</msg>
+  <msg key="Startdate">Startdate</msg>
   <msg key="Street_addresses">Street addresses</msg>
   <msg key="Trash">Trash</msg>
   <msg key="bic">BIC</msg>
