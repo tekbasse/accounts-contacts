@@ -1,7 +1,7 @@
 set title "#acs-subsite.Application#"
 set context [list $title]
 set contents ""
-
+qc_set_instance_id
 # 1. Identify the lib/templates to add to the complement .adp page
 #    that determine the overall presenation structure.
 
@@ -24,6 +24,7 @@ set contents ""
 
 set f_lol [qal_contact_form_def ]
 
+ns_log Notice "[ns_conn url] instance_id $instance_id"
 # Start rendering form definition..
 ::qfo::form_list_def_to_array \
     -list_of_lists_name f_lol \
