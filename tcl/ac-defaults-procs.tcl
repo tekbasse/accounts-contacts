@@ -145,10 +145,6 @@ ad_proc -private qal_contact_form_def {
                     [list name time_end value $fc_arr(time_end) context content_c3 datatype date html_before $html_before3 html_after $html_after label "#accounts-contacts.Enddate#" ] \
                     [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before3 html_after $html_after label "#q-data-types.url#" ] \
                     [list name notes value $fc_arr(notes) context content_c3 datatype block_text cols 34 html_before $html_before3 html_after $html_after label "#accounts-contacts.notes#"] \
-                    [list type submit name save context content_c5 \
-                         value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] \
-                    [list type submit name update context content_c5 \
-                         value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
                    ]
     qf_append_lol2_to_lol1 f2_lol f3_lol
     

@@ -156,60 +156,68 @@ if { $qf_archive_p } {
 
 
 # set f_lol
-# add appropriate buttons to form defintion
-if { !$qf_write_p && $write_p } {
-    if { $contact_id ne "" } {
+qal_contact_form_def -field_values_arr_name f_lol
+if { $write_p } {
+    # add appropriate buttons to form defintion
+    set f_buttons_lol [list \
+                           [list type submit name save context content_c5 \
+                                value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" action contact ] \
+                           [list type submit name update context content_c5 \
+                                value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" action contact ] \
+                          ]
 
-        # Show button to edit contact record
-        append content_html [qf_button_form \
-                                 name qf_write_p \
-                                 value "#accounts-contacts.Edit#" \
-                                 id contact-20180810c \
-                                 id contact-20180810c \
-                                 action contact \
-                                 name contact_id \
-                                 value $contact_id ]
-        
-        # Show button to archive contact record
-        append content_html [qf_button_form \
-                                 name qf_archive_p \
-                                 value "#accounts-contacts.Archive#" \
-                                 id contact-20180826a \
-                                 id contact-20180826a \
-                                 action contact \
-                                 name contact_id \
-                                 value $contact_id ]
-        
+    if { $contact_id ne "" } {
+        # Show button to edit contact record. No. Assumes one wants to edit here. Make a contact-view page to just see (with edit button)
+        # Show button to archive contact record (by posting an end-date, default to today as end-date)
         # Show button to trash contact record
-        append content_html [qf_button_form \
-                                 name qf_trash_p \
-                                 value "#accounts-contacts.Trash#" \
-                                 id contact-20180826b \
-                                 id contact-20180826b \
-                                 action contact \
-                                 name contact_id \
-                                 value $contact_id ]
-        
-        # Show buttons to manage addresses
+        # Show links to view/edit other addresses (separate from buttons)
         #
-        append content_html "<h2>#accounts-contacts.Street_addresses#</h2>"
-        append content_html [qf_button_form \
-                                 name submit \
-                                 value "#acs-kernel.common_View#" \
-                                 id contact-20180810a \
-                                 action contact-addresses \
-                                 name contact_id \
-                                 value $contact_id ]
-        append content_html "<h2>#accounts-contacts.Other_addresses#</h2>"
-        append content_html [qf_button_form \
-                                 id contact-20180810b \
-                                 action contact-other-addresses \
-                                 name submit \
-                                 value "#acs-kernel.common_View#" \
-                                 name contact_id \
-                                 value $contact_id ]
+        # Sql-Ledger has other buttons:
+        # AR Transaction, Sales Invoice, Credit Invoice, POS, Sales Order,
+        # Quotation, Pricelist, New Number(copy to a new contact_id)
+        # We're skipping New Number for now, because that's likely
+        # mostly a patch for linear membership association.
+        # This has built-in groups to increase managability and avoid copying.
+        set accounts_receivables_inst_p [apm_package_installed_p accounts-receivables]
+        if { $accounts_receivables_inst_p } {
+            ### TODO
+            # add buttons:
+            # (Make these defs a proc, because they'll be peppered all over)
+            # AR Transaction
+            # Sales Invoice
+            # Credit Invoice
+            # POS
+            # Sales Order
+            # Sales Quotation
+            # Customer Pricelist
+        }
+        set accounts_payables_inst_p [apm_package_installed_p accounts-payables]
+        if { $accounts_payables_inst_p } {
+            ### TODO
+            # (Make these defs a proc, because they'll be peppered all over)
+            # add buttons:
+            # Vendor Pricelist
+            # AP Transaction
+            # Vendor Invoice
+            # Purchase Order
+            # Vendor Quotation
+            # RFQ
+        }
+
+        set accounts_ledger_inst_p [apm_package_installed_p accounts-ledger]
+        if { $accounts_ledger_inst_p } {
+            ### TODO
+            # (Make these defs a proc, because they'll be peppered all over)
+            # Vendor - to see contact's vendor record or make one
+            # Customer - to see contact's customer record or make one
+        }
+        
+        set f_buttons_write_lol [list \
+                                     [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a action contact ] \
+                                     [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b action contact ] ]
     }
-}
+
+qf_append_lol2_to_lol1 f_lol f2_lol
 
 ::qfo::form_list_def_to_array \
     -list_of_lists_name f_lol \
