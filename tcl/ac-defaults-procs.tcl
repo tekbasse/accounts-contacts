@@ -78,11 +78,15 @@ ad_proc -private qal_contact_form_def {
     if { $field_values_arr_name ne "" } {
         upvar 1 field_values_arr_name fv_arr
     }
-    # 2 col
+    # 2 col responsive to 1
     set html_before1 {<div class="grid-6 m-grid-12 s-grid-12"><div class="content-box">}
-    # 3 col
+    # 3 col responsive to 1
     set html_before2 {<div class="grid-4 m-grid-2 s-grid-12"><div class="content-box">}
+    # 2 col fixed
     set html_before3 {<div class="grid-6 m-grid-6 s-grid-6"><div class="content-box">}
+    # 4 col responsive to 1
+    set html_before4 {<div class="grid-3 m-grid-6 s-grid-12"><div class="content-box">}
+
     set html_after {</div></div>}
     
     qal_contact_defaults fc_arr
@@ -100,8 +104,8 @@ ad_proc -private qal_contact_form_def {
     # but language keys don't correlate
     set at_lol [list \
                     [list value street_address label "#accounts-contacts.Address#"] \
-                    [list value billing_address label "#accounts-contacts.Billing_Address"] \
-                    [list value shipping_address label "#accounts-contacts.Shipping_Address"] \
+                    [list value billing_address label "#accounts-contacts.Billing_Address#"] \
+                    [list value shipping_address label "#accounts-contacts.Shipping_Address#"] \
                     [list value other_address label "#accounts-contacts.Other_addresses#" ]]
     # set the value to existing one 
     set addrs_type_lol [list ]
@@ -114,10 +118,10 @@ ad_proc -private qal_contact_form_def {
 
     
     set addrs_lol  [list \
-                        [list name address_type value $fa_arr(address_type) context content_c2 datatype qf_choice $addrs_type_lol html_before $html_before1 html_after $html_after ] \
-                        [list name address0 value $fa_arr(address0) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#accounts-contacts.street_address# 1/3" title "#q-data-types.street_address_hint#"] \
-                        [list name address1 value $fa_arr(address1) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#accounts-contacts.street_address# 2/3" title "#q-data-types.street_address_hint#"] \
-                        [list name address2 value $fa_arr(address2) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#accounts-contacts.street_address# 3/3" title "#q-data-types.street_address_hint#"] \
+                        [list name address_type type select value $addrs_type_lol context content_c2 html_before $html_before1 html_after $html_after ] \
+                        [list name address0 value $fa_arr(address0) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#q-data-types.street_address# 1/3" title "#q-data-types.street_address_hint#"] \
+                        [list name address1 value $fa_arr(address1) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#q-data-types.street_address# 2/3" title "#q-data-types.street_address_hint#"] \
+                        [list name address2 value $fa_arr(address2) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#q-data-types.street_address# 3/3" title "#q-data-types.street_address_hint#"] \
                         [list name city value $fa_arr(city) context content_c2 datatype text maxlength 32 html_before $html_before2 html_after $html_after label "#accounts-contacts.City#"] \
                         [list name state value $fa_arr(state) context content_c2 datatype region maxlength 32 html_before $html_before2 html_after $html_after label "#q-data-types.region#"] \
                         [list name postal_code value $fa_arr(postal_code) context content_c2 datatype postal_code maxlength 10 html_before $html_before2 html_after $html_after label "#q-data-types.postal_code#"] \
@@ -134,13 +138,13 @@ ad_proc -private qal_contact_form_def {
     
     # Add the rest of the form elements. Skipping: taxnumber, iban, bic, currency
     set f3_lol [list \
-                    [list name sic_code value $fc_arr(sic_code) context content_c3 datatype natural_num html_before $html_before2 html_after $html_after label "#accounts-contacts.SIC#"] \
+                    [list name sic_code value $fc_arr(sic_code) context content_c3 datatype text maxlength 15 html_before $html_before2 html_after $html_after label "#accounts-contacts.SIC#"] \
                     [list name language_code value $fc_arr(language_code) context content_c3 datatype text maxlength 12 html_before $html_before2 html_after $html_after label "#accounts-contacts.language_code#" ] \
                     [list name timezone value $fc_arr(timezone) context content_c3 datatype text maxlength 4 html_before $html_before2 html_after $html_after label "#accounts-contacts.timezone#" ] \
                     [list name time_start value $fc_arr(time_start) context content_c3 datatype date html_before $html_before3 html_after $html_after label "#accounts-contacts.Startdate#" ] \
                     [list name time_end value $fc_arr(time_end) context content_c3 datatype date html_before $html_before3 html_after $html_after label "#accounts-contacts.Enddate#" ] \
-                    [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before3 html_after $html_after label "#accounts-contacts.URL#" ] \
-                    [list name notes value $fc_arr(notes) context content_c4 datatype block_text cols 34 html_before $html_before3 html_after $html_after label "#accounts-contacts.notes#"] \
+                    [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before3 html_after $html_after label "#q-data-types.url#" ] \
+                    [list name notes value $fc_arr(notes) context content_c3 datatype block_text cols 34 html_before $html_before3 html_after $html_after label "#accounts-contacts.notes#"] \
                     [list type submit name save context content_c5 \
                          value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] \
                     [list type submit name update context content_c5 \

@@ -41,6 +41,8 @@ set validated_p [qal_3g \
                      -fields_array f_arr \
                      -inputs_as_array input_array \
                      -form_submitted_p $form_submitted_p \
+                     -dev_mode_p 1 \
+                     -form_verify_varname "confirmed" \
                      -form_varname "content_c" ]
 
 
@@ -54,7 +56,7 @@ if { $validated_p } {
     }
     # Presenting a new blank form?  Consider rp_internal_redirect
     # which resets form to default values
-    rp_internal_redirect [ns_conn url]
+    # rp_internal_redirect [ns_conn url]
     # Would it be better if qal_3g supplied the default form as well
     # as a changed one when validated,
     # so the app could decide to present a fresh form?
