@@ -29,7 +29,7 @@ ns_log Notice "contact.tcl.30 instance_id '${instance_id}'"
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
 
-set read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
+set user_read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
 set content_html ""
 
 if { !$read_p } {
@@ -38,15 +38,16 @@ if { !$read_p } {
     ad_script_abort
 }
 
-set write_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
+set user_create_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
+set user_write_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
+set user_delete_p [qc_permission_p $user_id $org_contact_id $property_label delete $instance_id]
 
-if { $write_p } {
+set input_array(qf_archive_p) ""
+set input_array(qf_trash_p) ""
+set input_array(contact_id) ""
+set input_array(qf_write_p) ""
 
-    set input_array(qf_archive_p) ""
-    set input_array(qf_trash_p) ""
-    set input_array(contact_id) ""
-    set input_array(qf_write_p) ""
-
+if { $user_write_p } {
     # Get input_array, so we can set the state of the buttons
     # and maybe perform some action before displaying another form.
     set form_submitted_p [qf_get_inputs_as_array input_array]
@@ -74,9 +75,9 @@ if { $write_p } {
     array unset input_array contact_id
     array unset input_array qf_write_p
 
-    if { $qf_trash_p } {
+    if { $qf_trash_p && $user_delete_p } {
         set success_p [qal_contact_trash $contact_id]
-    } else { 
+    } else {
         set record_nvl [qal_contact_read $contact_id $org_contact_id]
         ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
         #  id - this is contact_id
@@ -119,7 +120,6 @@ if { $write_p } {
         if { $contact_id eq "" } {
             append content_html "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
             ns_log Warning "accounts-contacts/www/contact.tcl.157 unable to archive contact_id '${contact_id}"
-            set form_submitted_p 1
         } else {
             ad_returnredirect contacts
             ad_script_abort
@@ -161,7 +161,34 @@ if { $write_p } {
         # We're skipping New Number for now, because that's likely
         # mostly a patch for linear membership association.
         # This has built-in groups to increase managability and avoid copying.
-        set accounts_receivables_inst_p [apm_package_installed_p accounts-receivables]
+
+        if { [apm_package_installed_p accounts-ledger] } {
+            set subsite_node_ids_list [subsite::util::packages]
+            
+            foreach $n_id $subsite_node_ids_list {
+                set pkg_key [apm_package_key_from_id $n_id]
+                switch -exact -- $pkg_key {
+                    accounts-receivables {
+                        set accounts_receivables_p 1
+                        set accounts_receivables_url [apm_package_url_from_id $n_id]
+                        
+                    }
+                    accounts-payables {
+                        set accounts_payables_p 1
+                        set accounts_payables_url [apm_package_url_from_id $n_id]
+                        
+                    }
+                    accounts-ledger {
+                        set accounts_ledger_p 1
+                        set accounts_ledger_url [apm_package_url_from_id $n_id]
+                        
+                    }
+                    
+                }
+            }
+        }
+
+
         if { $accounts_receivables_inst_p } {
             ### TODO
             # add buttons:
@@ -234,3 +261,17 @@ if { $write_p } {
         rp_form_put contact_id $contact_id
     }
 }
+
+
+# notes on buttons
+# if content_id & edit_p, then show form
+# and update, cancel, post-as-new buttons
+
+# if no content_id, show blank form and
+# save, cancel buttons
+
+# otherwise display data ( disabled form)
+# and show edit button and other options..
+# see AR/ AP buttons above.
+
+
