@@ -6,13 +6,9 @@ set context [list $title]
 # unset instance_id for qc_set_instance_id
 #unset instance_id
 # defaults
-foreach k [qal_contact_keys ] {
-    set input_array(${k}) ""
-    set $k ""
-}
 
 set user_id [ad_conn user_id]
-unset instance_id
+#unset instance_id
 qc_set_instance_id
 ns_log Notice "contact.tcl.11 instance_id '${instance_id}'"
 # in accounts-contacts, differentiate org_contact_id from contact_id
@@ -24,7 +20,7 @@ set contact_id ""
 
 
 
-set input_array(contact_id) ""
+
 
 
 # no contact_id implies new contact
@@ -44,120 +40,107 @@ if { !$read_p } {
 
 set write_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
 
-#
-# If contact_id exists, and if qf_write_p is 0 , then show contact
-# If contact_id exists, and if qf_write_p is 1 , then edit contact
-# If contact_id doesn't exist, show form if write_p is 1
-set input_array(qf_write_p) 0
-# If qf_trash_p is not 0 , trash contact_id
-set input_array(qf_trash_p) 0
-# If qf_archive_p is not 0, archive contact_id
-set input_array(qf_archive_p) 0
+if { $write_p } {
 
-#
-# How to force qfo_g2 to present the form,
-# even if validated due to form_submitted_p?
-# One way is to have a form_submission counter.
-# This preserves the option to use hash_check with the form at some point.
-# On first form submit, validation is always 0, when write_p is used.
-# Which means we need to know if the variable write_p is referred to exists.
-# set input_array(qf_counter) 0
-# qal_3g offers this by default. 
+    set input_array(qf_archive_p) ""
+    set input_array(qf_trash_p) ""
+    set input_array(contact_id) ""
+    set input_array(qf_write_p) ""
 
-# Get input_array, so we can set the state of the buttons
-# and maybe perform some action before displaying another form.
-set form_submitted_p [qf_get_inputs_as_array input_array]
+    # Get input_array, so we can set the state of the buttons
+    # and maybe perform some action before displaying another form.
+    set form_submitted_p [qf_get_inputs_as_array input_array]
 
-# maybe trash or archive, but not both
-if { $input_array(qf_archive_p) ne 0 } {
-    set input_array(qf_archive_p) 1
-    
-} elseif { $input_array(qf_trash_p) ne 0 } {
-    set input_array(qf_trash_p) 1
-}	      
+    # maybe trash or archive, but not both
+    if { $input_array(qf_archive_p) ne 0 } {
+        set input_array(qf_archive_p) 1
+        
+    } elseif { $input_array(qf_trash_p) ne 0 } {
+        set input_array(qf_trash_p) 1
+    }	      
 
-set qf_archive_p $input_array(qf_archive_p)
-set qf_trash_p $input_array(qf_trash_p)
+    set qf_archive_p $input_array(qf_archive_p)
+    set qf_trash_p $input_array(qf_trash_p)
 
-if { [qf_is_natural_number $input_array(id) ] } {
-    set contact_id $input_array(id)
-} elseif { [qf_is_natural_number $input_array(contact_id) ] } {
-    set contact_id $input_array(contact_id)
-}
-ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
-
-array unset input_array qf_archive_p
-array unset input_array qf_trash_p
-array unset input_array contact_id
-array unset input_array qf_write_p
-
-if { $qf_trash_p } {
-    set success_p [qal_contact_trash $contact_id]
-} else { 
-    set record_nvl [qal_contact_read $contact_id $org_contact_id]
-    ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
-    #  id - this is contact_id
-    #  rev_id *internal
-    #  instance_id
-    #  parent_id
-    #  label
-    #  name
-    #  street_addrs_id
-    #  mailing_addrs_id
-    #  billing_addrs_id
-    #  vendor_id
-    #  customer_id
-    #  taxnumber
-    #  sic_code
-    #  iban
-    #  bic
-    #  language_code
-    #  currency
-    #  timezone
-    #  time_start
-    #  time_end
-    #  url
-    #  user_id *
-    #  created *
-    #  created_by *
-    #  trashed_p *
-    #  trashed_by *
-    #  trashed_ts *
-    #  notes 
-    foreach {n v} $record_nvl {
-        set $n $v
+    if { [qf_is_natural_number $input_array(id) ] } {
+        set contact_id $input_array(id)
+    } elseif { [qf_is_natural_number $input_array(contact_id) ] } {
+        set contact_id $input_array(contact_id)
     }
-}
-if { $qf_archive_p } {
-    # update / close record
-    # time is in standard date format.
-    set input_array(time_end) [qf_clock_format [clock seconds]]
-    set r_contact_id [qal_contact_write input_array]
-    if { $contact_id eq "" } {
-        append content_html "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
-        ns_log Warning "accounts-contacts/www/contact.tcl.157 unable to archive contact_id '${contact_id}"
-        set form_submitted_p 1
-    } else {
-        ad_returnredirect contacts
+    ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
+
+    array unset input_array qf_archive_p
+    array unset input_array qf_trash_p
+    array unset input_array contact_id
+    array unset input_array qf_write_p
+
+    if { $qf_trash_p } {
+        set success_p [qal_contact_trash $contact_id]
+    } else { 
+        set record_nvl [qal_contact_read $contact_id $org_contact_id]
+        ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
+        #  id - this is contact_id
+        #  rev_id *internal
+        #  instance_id
+        #  parent_id
+        #  label
+        #  name
+        #  street_addrs_id
+        #  mailing_addrs_id
+        #  billing_addrs_id
+        #  vendor_id
+        #  customer_id
+        #  taxnumber
+        #  sic_code
+        #  iban
+        #  bic
+        #  language_code
+        #  currency
+        #  timezone
+        #  time_start
+        #  time_end
+        #  url
+        #  user_id *
+        #  created *
+        #  created_by *
+        #  trashed_p *
+        #  trashed_by *
+        #  trashed_ts *
+        #  notes 
+        foreach {n v} $record_nvl {
+            set $n $v
+        }
+    }
+    if { $qf_archive_p } {
+        # update / close record
+        # time is in standard date format.
+        set input_array(time_end) [qf_clock_format [clock seconds]]
+        set r_contact_id [qal_contact_write input_array]
+        if { $contact_id eq "" } {
+            append content_html "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
+            ns_log Warning "accounts-contacts/www/contact.tcl.157 unable to archive contact_id '${contact_id}"
+            set form_submitted_p 1
+        } else {
+            ad_returnredirect contacts
+            ad_script_abort
+        }
+        
+    } elseif { $qf_trash_p } {
+        set r_contact_id [qal_contact_trash $contact_id ]
+        if { $contact_id eq "" } {
+            set message "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
+            ns_log Warning "accounts-contacts/www/contact.tcl.157 unable to archive contact_id '${contact_id}"
+            ad_returnredirect -message $message contacts
+        } else {
+            ad_returnredirect contacts
+        }
         ad_script_abort
     }
-    
-} elseif { $qf_trash_p } {
-    set r_contact_id [qal_contact_trash $contact_id ]
-    if { $contact_id eq "" } {
-        set message "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
-        ns_log Warning "accounts-contacts/www/contact.tcl.157 unable to archive contact_id '${contact_id}"
-        ad_returnredirect -message $message contacts
-    } else {
-        ad_returnredirect contacts
-    }
-    ad_script_abort
-}
 
 
-# set f_lol
-qal_contact_form_def -field_values_arr_name f_lol
-if { $write_p } {
+    # set f_lol
+    qal_contact_form_def -field_values_arr_name f_lol
+
     # add appropriate buttons to form defintion
     set f_buttons_lol [list \
                            [list type submit name save context content_c5 \
@@ -217,36 +200,37 @@ if { $write_p } {
                                      [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b action contact ] ]
     }
 
-qf_append_lol2_to_lol1 f_lol f2_lol
+    qf_append_lol2_to_lol1 f_lol f2_lol
 
-::qfo::form_list_def_to_array \
-    -list_of_lists_name f_lol \
-    -fields_ordered_list_name qf_fields_ordered_list \
-    -array_name f_arr \
-    -ignore_parse_issues_p 0
-
-
-set validated_p [qal_3g \
-                     -form_id 20200427 \
-                     -fields_ordered_list $qf_fields_ordered_list \
-                     -fields_array f_arr \
-                     -inputs_as_array input_array \
-                     -form_submitted_p $form_submitted_p \
-                     -dev_mode_p 1 \
-                     -form_verify_varname "confirmed" \
-                     -form_varname "content_c" \
-                     -write_p $write_p ]
+    ::qfo::form_list_def_to_array \
+        -list_of_lists_name f_lol \
+        -fields_ordered_list_name qf_fields_ordered_list \
+        -array_name f_arr \
+        -ignore_parse_issues_p 0
 
 
+    set validated_p [qal_3g \
+                         -form_id 20200427 \
+                         -fields_ordered_list $qf_fields_ordered_list \
+                         -fields_array f_arr \
+                         -inputs_as_array input_array \
+                         -form_submitted_p $form_submitted_p \
+                         -dev_mode_p 1 \
+                         -form_verify_varname "confirmed" \
+                         -form_varname "content_c" \
+                         -write_p $write_p ]
 
 
-if { $validated_p } {
-    if { $contact_id eq "" } {
-        qal_contact_create input_array
-        ns_log Notice "accounts-contacts/www/contact.tcl creating contact: array get input_array '[array get input_array]'"
-    } else {
-        set contact_id [qal_contact_write input_array]
-        ns_log Notice "accounts-contacts/www/contact.tcl writing contact_id '${contact_id}': array get input_array '[array get input_array]'"
+
+
+    if { $validated_p } {
+        if { $contact_id eq "" } {
+            qal_contact_create input_array
+            ns_log Notice "accounts-contacts/www/contact.tcl creating contact: array get input_array '[array get input_array]'"
+        } else {
+            set contact_id [qal_contact_write input_array]
+            ns_log Notice "accounts-contacts/www/contact.tcl writing contact_id '${contact_id}': array get input_array '[array get input_array]'"
+        }
+        rp_form_put contact_id $contact_id
     }
-    rp_form_put contact_id $contact_id
 }
