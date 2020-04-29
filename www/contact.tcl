@@ -38,7 +38,7 @@ if { !$read_p } {
     ad_script_abort
 }
 
-set user_create_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
+set user_create_p [qc_permission_p $user_id $org_contact_id $property_label create $instance_id]
 set user_write_p [qc_permission_p $user_id $org_contact_id $property_label write $instance_id]
 set user_delete_p [qc_permission_p $user_id $org_contact_id $property_label delete $instance_id]
 
@@ -162,65 +162,8 @@ if { $user_write_p } {
         # mostly a patch for linear membership association.
         # This has built-in groups to increase managability and avoid copying.
 
-        if { [apm_package_installed_p accounts-ledger] } {
-            set subsite_node_ids_list [subsite::util::packages]
-            
-            foreach $n_id $subsite_node_ids_list {
-                set pkg_key [apm_package_key_from_id $n_id]
-                switch -exact -- $pkg_key {
-                    accounts-receivables {
-                        set accounts_receivables_p 1
-                        set accounts_receivables_url [apm_package_url_from_id $n_id]
-                        
-                    }
-                    accounts-payables {
-                        set accounts_payables_p 1
-                        set accounts_payables_url [apm_package_url_from_id $n_id]
-                        
-                    }
-                    accounts-ledger {
-                        set accounts_ledger_p 1
-                        set accounts_ledger_url [apm_package_url_from_id $n_id]
-                        
-                    }
-                    
-                }
-            }
-        }
 
 
-        if { $accounts_receivables_inst_p } {
-            ### TODO
-            # add buttons:
-            # (Make these defs a proc, because they'll be peppered all over)
-            # AR Transaction
-            # Sales Invoice
-            # Credit Invoice
-            # POS
-            # Sales Order
-            # Sales Quotation
-            # Customer Pricelist
-        }
-        set accounts_payables_inst_p [apm_package_installed_p accounts-payables]
-        if { $accounts_payables_inst_p } {
-            ### TODO
-            # (Make these defs a proc, because they'll be peppered all over)
-            # add buttons:
-            # Vendor Pricelist
-            # AP Transaction
-            # Vendor Invoice
-            # Purchase Order
-            # Vendor Quotation
-            # RFQ
-        }
-
-        set accounts_ledger_inst_p [apm_package_installed_p accounts-ledger]
-        if { $accounts_ledger_inst_p } {
-            ### TODO
-            # (Make these defs a proc, because they'll be peppered all over)
-            # Vendor - to see contact's vendor record or make one
-            # Customer - to see contact's customer record or make one
-        }
         
         set f_buttons_write_lol [list \
                                      [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a action contact ] \

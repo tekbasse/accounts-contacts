@@ -612,3 +612,162 @@ ad_proc -private qal_vendor_id_from_contact_id {
         and trashed_p!='1'}
 return $id
 }
+
+ad_proc -private qac_extended_package_urls {
+    {-accounts_receivables_vname ""}
+    {-accounts_payables_vname ""}
+    {-accounts_ledger_vname ""}
+} {
+    Assigns the variables with the url of package, if the package
+    is installed and a package instance in the same subsite
+    as accounts-contacts' instance. Otherwise sets the variables to empty
+    string.
+    <br><br>
+    Returns 1 if any found, otherwise 0
+} {
+    # accounts-ledger is a common requirement of all three.
+    # Don't need to check if it isn't installed.
+    set found_p 0
+    upvar 1 $accounts_receivables_vname ar_url
+    upvar 1 $accounts_payables_vname ap_url
+    upvar 1 $accounts_ledger_vname gl_url
+    set ar_url ""
+    set ap_url ""
+    set gl_url ""
+    if { [apm_package_installed_p accounts-ledger] } {
+        set subsite_node_ids_list [subsite::util::packages]
+        foreach $n_id $subsite_node_ids_list {
+            set pkg_key [apm_package_key_from_id $n_id]
+            switch -exact -- $pkg_key {
+                accounts-receivables {
+                    set ar_p 1
+                    set ar_url [apm_package_url_from_id $n_id]
+                    set found_p 1
+                }
+                accounts-payables {
+                    set ap_p 1
+                    set ap_url [apm_package_url_from_id $n_id]
+                    set found_p 1
+                }
+                accounts-ledger {
+                    set gl_p 1
+                    set gl_url [apm_package_url_from_id $n_id]
+                    set found_p 1
+                }
+            }
+        }
+    }
+    return $found_p
+}
+
+ad_proc -private qac_ar_button_defs_lol {
+    {-accounts_receivables_url ""}
+} {
+    Returns button definitions for beginning actions
+    in accounts-receivables package in same subsite
+    from another package,
+    where definitions work with qal_3g or qfo_2g procs.
+    Button definitions return as a list of lists, or an empty list
+    if url is empty string.
+    
+    @see qac_extended_package_urls
+    @see qal_3g
+    @see qfo_2g
+} {
+    if { $accounts_receivables_url ne "" } {
+        # add buttons:
+        # AR Transaction
+        # Sales Invoice
+        # Credit Invoice
+        # POS invoice
+        # Sales Order
+        # Sales Quotation
+        # Customer Pricelist
+        set ar_btn_defs_lol [list \
+                                 [list name qf_ar_trans value "#accounts-ledger.AR_Transaction#" id contact-20200428a action "${accounts_receivables_url}/transaction" ] \
+                                 [list name qf_inv_sales value "#accounts-ledger.Add_Sales_Invoice#" id contact-20200428b action "${accounts_receivables_url}/invoice-sales" ] \
+                                 [list name qf_inv_credit value "#accounts-ledger.Add_Sales_Invoice#" id contact-20200428c action "${accounts_receivables_url}/invoice-credit" ] \
+                                 [list name qf_inv_pos value "#accounts-ledger.Add_POS_Invoice#" id contact-20200428d action "${accounts_receivables_url}/invoice-pos" ] \
+                                 [list name qf_ord_sales value "#accounts-ledger.Add_Add_Sales_Order" id contact-20200428e action "${accounts_receivables_url}/order-sales" ] \
+                                 [list name qf_quote_sales value "#accounts-ledger.Add_Quotation#" id contact-20200428f action "${accounts_receivables_url}/quote-sales" ] \
+                                 [list name qf_pricelist_c value "#accounts-ledger.Pricelist#" id contact-20200428g action "${accounts_receivables_url}/pricelist-customer" ] ]
+    } else {
+        set ar_btn_defs_lol [list ]
+    }
+    return $ar_btn_defs_lol
+}
+
+ad_proc -private qac_ar_buttons_transform {
+    {-input_array_name ""}
+    {-accounts_receivables_url ""}
+} {
+    Transforms, validates form inputs for buttons to boolean
+    values and returns the relevant url for redirecting page.
+} {
+    set redirect_url ""
+    if { $accounts_receivables_url ne "" } {
+        upvar 1 $input_array_name f_arr
+        set ar_trans_p [info exists f_arr(qf_ar_trans) ]
+        set inv_sales_p [info exists f_arr(qf_inv_sales) ]
+        set inv_credit_p [info exists f_arr(qf_inv_sales) ]
+        set inv_pos_p [info exists f_arr(qf_inv_pos) ]
+        set ord_sales_p [info exists f_arr(qf_ord_sales) ]
+        set quote_sales_p [info exists f_arr(qf_quote_sales) ]
+        set pricelist_c_p [info exists f_arr(qf_pricelist_c) ]
+        # Maybe would be faster to use binary math and switch?
+        # kiss
+        # Yes, kiss it is, but this would be so much fun!
+        # https://wiki.tcl-lang.org/page/Binary+representation+of+numbers
+        # And the solution would be useful all over these packages.
+        # So, lets try.
+        append b $ar_trans_p $inv_sales_p $inv_credit_p
+        append b $inv_pos_p $ord_sales_p $quote_sales_p $pricelist_c_p
+        # LOL, don't have to convert to decimal. Just use the binary!
+        switch -exact -- $b {
+            100000 {
+                ###todo
+            }
+        }
+        set redirect_url $accounts_receivables_urls
+        }
+    return $redirect_url
+}
+
+
+ad_proc -private qac_ap_button_defs_lol {
+    {-accounts_payables_url ""}
+} {
+    Returns button definitions for beginning actions
+    in accounts-payables package in same subsite
+    from another package,
+    where definitions work with qal_3g or qfo_2g procs.
+    Button definitions return as a list of lists, or an empty list
+    if url is empty string.
+    
+    @see qac_extended_package_urls
+    @see qal_3g
+    @see qfo_2g
+} {
+    if { $accounts_payables_url ne "" } {
+        # add buttons:
+        # Vendor Pricelist
+        # AP Transaction
+        # Vendor Invoice
+        # Purchase Order
+        # Vendor Quotation
+        # RFQ
+        set ap_btn_defs_lol [list \
+                                 [list 
+    } else {
+        set ap_btn_defs_lol [list ]
+    }
+    return $ap_btn_defs_lol
+}
+
+        set accounts_ledger_inst_p [apm_package_installed_p accounts-ledger]
+        if { $accounts_ledger_inst_p } {
+            ### TODO
+            # (Make these defs a proc, because they'll be peppered all over)
+            # Vendor - to see contact's vendor record or make one
+            # Customer - to see contact's customer record or make one
+        }
