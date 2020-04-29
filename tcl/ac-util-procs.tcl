@@ -684,13 +684,13 @@ ad_proc -private qac_ar_button_defs_lol {
         # Sales Quotation
         # Customer Pricelist
         set ar_btn_defs_lol [list \
-                                 [list name qf_ar_trans value "#accounts-ledger.AR_Transaction#" id contact-20200428a action "${accounts_receivables_url}/transaction" ] \
-                                 [list name qf_inv_sales value "#accounts-ledger.Add_Sales_Invoice#" id contact-20200428b action "${accounts_receivables_url}/invoice-sales" ] \
-                                 [list name qf_inv_credit value "#accounts-ledger.Add_Sales_Invoice#" id contact-20200428c action "${accounts_receivables_url}/invoice-credit" ] \
-                                 [list name qf_inv_pos value "#accounts-ledger.Add_POS_Invoice#" id contact-20200428d action "${accounts_receivables_url}/invoice-pos" ] \
-                                 [list name qf_ord_sales value "#accounts-ledger.Add_Add_Sales_Order" id contact-20200428e action "${accounts_receivables_url}/order-sales" ] \
-                                 [list name qf_quote_sales value "#accounts-ledger.Add_Quotation#" id contact-20200428f action "${accounts_receivables_url}/quote-sales" ] \
-                                 [list name qf_pricelist_c value "#accounts-ledger.Pricelist#" id contact-20200428g action "${accounts_receivables_url}/pricelist-customer" ] ]
+                                 [list name qf_ar_trans value "#accounts-ledger.AR_Transaction#" id qac-20200428a] \
+                                 [list name qf_inv_sales value "#accounts-ledger.Add_Sales_Invoice#" id qac-20200428b] \
+                                 [list name qf_inv_credit value "#accounts-ledger.Add_Credit_Invoice#" id qac-20200428c] \
+                                 [list name qf_inv_pos value "#accounts-ledger.Add_POS_Invoice#" id qac-20200428d] \
+                                 [list name qf_ord_sales value "#accounts-ledger.Add_Add_Sales_Order" id qac-20200428e] \
+                                 [list name qf_quote_sales value "#accounts-ledger.Add_Quotation#" id qac-20200428f] \
+                                 [list name qf_pricelist_c value "(#accounts-ledger.Customer#) #accounts-ledger.Pricelist#" id qac-20200428g] ]
     } else {
         set ar_btn_defs_lol [list ]
     }
@@ -709,30 +709,45 @@ ad_proc -private qac_ar_buttons_transform {
         upvar 1 $input_array_name f_arr
         set ar_trans_p [info exists f_arr(qf_ar_trans) ]
         set inv_sales_p [info exists f_arr(qf_inv_sales) ]
-        set inv_credit_p [info exists f_arr(qf_inv_sales) ]
+        set inv_credit_p [info exists f_arr(qf_inv_credit) ]
         set inv_pos_p [info exists f_arr(qf_inv_pos) ]
         set ord_sales_p [info exists f_arr(qf_ord_sales) ]
         set quote_sales_p [info exists f_arr(qf_quote_sales) ]
         set pricelist_c_p [info exists f_arr(qf_pricelist_c) ]
-        # Maybe would be faster to use binary math and switch?
-        # kiss
-        # Yes, kiss it is, but this would be so much fun!
-        # https://wiki.tcl-lang.org/page/Binary+representation+of+numbers
-        # And the solution would be useful all over these packages.
-        # So, lets try.
+
         append b $ar_trans_p $inv_sales_p $inv_credit_p
         append b $inv_pos_p $ord_sales_p $quote_sales_p $pricelist_c_p
-        # LOL, don't have to convert to decimal. Just use the binary!
+
+        set redirect_url $accounts_receivables_url
         switch -exact -- $b {
-            100000 {
-                ###todo
+            1000000 {
+                append redirect_url "/transaction"
+            }
+            0100000 {
+                append redirect_url "/invoice-sales"
+            }
+            0010000 {
+                append redirect_url "/invoice-credit"
+            }
+            0001000 {
+                append redirect_url "/invoice-pos"
+            }
+            0000100 {
+                append redirect_url "/order-sales"
+            }
+            0000010 {
+                append redirect_url "/quote-sales"
+            }
+            0000001 {
+                append redirect_url "/pricelist-customer"
+            }
+            default {
+                set redirect_url ""
             }
         }
-        set redirect_url $accounts_receivables_urls
-        }
+    }
     return $redirect_url
 }
-
 
 ad_proc -private qac_ap_button_defs_lol {
     {-accounts_payables_url ""}
@@ -750,24 +765,104 @@ ad_proc -private qac_ap_button_defs_lol {
 } {
     if { $accounts_payables_url ne "" } {
         # add buttons:
-        # Vendor Pricelist
         # AP Transaction
         # Vendor Invoice
         # Purchase Order
         # Vendor Quotation
         # RFQ
+        # Vendor Pricelist
         set ap_btn_defs_lol [list \
-                                 [list 
+                                 [list name qf_ap_trans value "#accounts-ledger.AP_Transaction#" id qac-20200428n] \
+                                 [list name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice#" id qac-20200428o] \
+                                 [list name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order#" id qac-20200428p] \
+                                 [list name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote" id qac-20200428r] \
+                                 [list name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation#" id qac-20200428s] \
+                                 [list name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist#" id qac-20200428t] ]
     } else {
         set ap_btn_defs_lol [list ]
     }
     return $ap_btn_defs_lol
 }
 
-        set accounts_ledger_inst_p [apm_package_installed_p accounts-ledger]
-        if { $accounts_ledger_inst_p } {
-            ### TODO
-            # (Make these defs a proc, because they'll be peppered all over)
-            # Vendor - to see contact's vendor record or make one
-            # Customer - to see contact's customer record or make one
+ad_proc -private qac_ap_buttons_transform {
+    {-input_array_name ""}
+    {-accounts_payables_url ""}
+} {
+    Transforms, validates form inputs for buttons to boolean
+    values and returns the relevant url for redirecting page.
+} {
+    set redirect_url ""
+    if { $accounts_payables_url ne "" } {
+        upvar 1 $input_array_name f_arr
+        set ap_trans_p [info exists f_arr(qf_ap_trans) ]
+        set inv_vendor_p [info exists f_arr(qf_inv_vendor) ]
+        set ord_purchase_p [info exists f_arr(qf_order_purchase) ]
+        set quote_vendor_p [info exists f_arr(qf_quote_vendor) ]
+        set quote_request_p [info exists f_arr(qf_quote_request) ]
+        set pricelist_v_p [info exists f_arr(qf_pricelist_v) ]
+
+        append b $ap_trans_p $inv_vendor_p $ord_purchase_p
+        append b $quote_vendor_p $quote_request_p $pricelist_v_p
+
+        set redirect_url $accounts_payables_url
+        switch -exact -- $b {
+            10000 {
+                append redirect_url "/transaction"
+            }
+            01000 {
+                append redirect_url "/invoice-vendor"
+            }
+            01000 {
+                append redirect_url "/order-purchase"
+            }
+            00100 {
+                append redirect_url "/quote-vendor"
+            }
+            00010 {
+                append redirect_url "/quote-request"
+            }
+            00001 {
+                append redirect_url "/pricelist-customer"
+            }
+            default {
+                set redirect_url ""
+            }
         }
+    }
+    return $redirect_url
+}
+
+ad_proc -private qac_al_button_defs_lol {
+    {-accounts_ledger_url ""}
+} {
+    Returns button definitions for beginning actions
+    in accounts-ledger package in same subsite
+    from another package,
+    where definitions work with qal_3g or qfo_2g procs.
+    Button definitions return as a list of lists, or an empty list
+    if url is empty string.
+    
+    @see qac_extended_package_urls
+    @see qal_3g
+    @see qfo_2g
+} {
+    if { $accounts_ledger_url ne "" } {
+        ### TODO
+        # (Make these defs a proc, because they'll be peppered all over)
+        # Vendor - to see contact's vendor record or make one
+        # Customer - to see contact's customer record or make one
+
+        set al_btn_defs_lol [list \
+                                 [list name qf_ap_trans value "#accounts-ledger.AP_Transaction#" id qac-20200428n] \
+                                 [list name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice#" id qac-20200428o] \
+                                 [list name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order#" id qac-20200428p] \
+                                 [list name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote" id qac-20200428r] \
+                                 [list name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation#" id qac-20200428s] \
+                                 [list name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist#" id qac-20200428t] ]
+
+    } else {
+        set al_btn_defs_lol [list ]
+    }
+    return $al_btn_defs_lol
+}
+
