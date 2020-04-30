@@ -847,22 +847,43 @@ ad_proc -private qac_al_button_defs_lol {
     @see qfo_2g
 } {
     if { $accounts_ledger_url ne "" } {
-        ### TODO
-        # (Make these defs a proc, because they'll be peppered all over)
         # Vendor - to see contact's vendor record or make one
         # Customer - to see contact's customer record or make one
-
         set al_btn_defs_lol [list \
-                                 [list name qf_ap_trans value "#accounts-ledger.AP_Transaction#" id qac-20200428n] \
-                                 [list name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice#" id qac-20200428o] \
-                                 [list name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order#" id qac-20200428p] \
-                                 [list name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote" id qac-20200428r] \
-                                 [list name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation#" id qac-20200428s] \
-                                 [list name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist#" id qac-20200428t] ]
-
+                                 [list name qf_vendor value "#accounts-ledger.Vendor#" id qac-20200428x] \
+                                 [list name qf_customer value "#accounts-ledger.Customer#" id qac-20200428y] ]
     } else {
         set al_btn_defs_lol [list ]
     }
     return $al_btn_defs_lol
 }
 
+ad_proc -private qac_al_buttons_transform {
+    {-input_array_name ""}
+    {-accounts_ledger_url ""}
+} {
+    Transforms, validates form inputs for buttons to boolean
+    values and returns the relevant url for redirecting page.
+} {
+    set redirect_url ""
+    if { $accounts_ledger_url ne "" } {
+        upvar 1 $input_array_name f_arr
+        set vendor_p [info exists f_arr(qf_vendor) ]
+        set customer_p [info exists f_arr(qf_customer) ]
+        append b $vendor_p $customer_p
+
+        set redirect_url $accounts_ledger_url
+        switch -exact -- $b {
+            10 {
+                append redirect_url "/vendor"
+            }
+            01 {
+                append redirect_url "/customer"
+            }
+            default {
+                set redirect_url ""
+            }
+        }
+    }
+    return $redirect_url
+}
