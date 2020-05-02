@@ -64,7 +64,7 @@ ad_proc -private qal_contact_form_def {
 } {
     Returns a form definiton for qal_contact table to feed to qfo::array_set_form_list and subsequently to qal_3g.
     
-    <code>field_values_arr_name</code> is the name of an array
+    <code>field_values_lol_name</code> is the name of an array
     where the indexes are names of fields, and
     their values replace internal defaults.
     This is more for customizations that might occur at a single page,
@@ -76,8 +76,8 @@ ad_proc -private qal_contact_form_def {
     @see qal_3g
 } {
     upvar 1 instance_id instance_id
-    if { $field_values_arr_name ne "" } {
-        upvar 1 field_values_lol_name fv_arr
+    if { $field_values_lol_name ne "" } {
+        upvar 1 $field_values_lol_name fv_arr
     }
     # 2 col responsive to 1
     set html_before1 {<div class="grid-6 m-grid-12 s-grid-12"><div class="content-box">}

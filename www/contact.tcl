@@ -23,7 +23,7 @@ set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 set user_read_p [qc_permission_p $user_id $org_contact_id $property_label read $instance_id]
 set content_html ""
 
-if { !$read_p } {
+if { !$user_read_p } {
     set title "#q-control.You_don_t_have_permission#"
     ad_return_exception_page 401 $title $title
     ad_script_abort
@@ -115,7 +115,7 @@ qal_contact_form_def -field_values_lol_name f_lol
 set f_buttons_lol [list \
                        [list type submit name save context content_c5 value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
 
-if { $delete_p } {
+if { $user_delete_p } {
     set f_btns_trash_archive_lol [list \
                                       [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a ] \
                                       [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b ] ]
@@ -126,11 +126,15 @@ if { $delete_p } {
 set btn_update_lol [list \
                         [list type submit name update context content_c6 value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
                         [list type submit name save_as_new context content_c6 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
+qac_extended_package_urls_get \
+    -accounts_receivables_vname ar_pkg_url \
+    -accounts_payables_vname ap_pkg_url \
+    -accounts_ledger_vname al_pkg_url
 qf_append_lol f_buttons_lol $btn_update_lol
 qf_append_lol f_buttons_lol [qac_ar_button_defs_lol \
                                  -accounts_receivables_url $ar_pkg_url]
 qf_append_lol f_buttons_lol [qac_ap_button_defs_lol \
-                                 -accounts_paybables_url $ap_pkg_url]
+                                 -accounts_payables_url $ap_pkg_url]
 qf_append_lol f_buttons_lol [qac_al_button_defs_lol \
                                  -accounts_ledger_url $al_pkg_url]
 
@@ -152,7 +156,7 @@ set validated_p [qal_3g \
                      -dev_mode_p 1 \
                      -form_verify_varname "confirmed" \
                      -form_varname "content_c" \
-                     -write_p $write_p ]
+                     -write_p $user_write_p ]
 
 if { $validated_p } {
 
@@ -170,10 +174,6 @@ if { $validated_p } {
         }
     }
 
-    qac_extended_package_urls_get \
-        -accounts_receivables_vname ar_pkg_url \
-        -accounts_payables_vname ap_pkg_url \
-        -accounts_ledger_vname al_pkg_url
     if { $redirect_url eq "" } {
         set redirect_url [qac_ar_buttons_transform \
                               -input_array_name input_array \

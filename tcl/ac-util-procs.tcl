@@ -635,8 +635,8 @@ ad_proc -private qac_extended_package_urls_get {
     set ap_url ""
     set gl_url ""
     if { [apm_package_installed_p accounts-ledger] } {
-        set subsite_node_ids_list [subsite::util::packages]
-        foreach $n_id $subsite_node_ids_list {
+        set subsite_node_ids_list [subsite::util::packages -node_id [ad_conn node_id]]
+        foreach n_id $subsite_node_ids_list {
             set pkg_key [apm_package_key_from_id $n_id]
             switch -exact -- $pkg_key {
                 accounts-receivables {
