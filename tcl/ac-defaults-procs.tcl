@@ -58,8 +58,9 @@ ad_proc -private qal_contact_defaults {
     return 1
 }
 
-ad_proc -private qal_contact_form_set {
-    {-field_values_arr_name ""}
+
+ad_proc -private qal_contact_form_def {
+    {-field_values_lol_name ""}
 } {
     Returns a form definiton for qal_contact table to feed to qfo::array_set_form_list and subsequently to qal_3g.
     
@@ -76,7 +77,7 @@ ad_proc -private qal_contact_form_set {
 } {
     upvar 1 instance_id instance_id
     if { $field_values_arr_name ne "" } {
-        upvar 1 field_values_arr_name fv_arr
+        upvar 1 field_values_lol_name fv_arr
     }
     # 2 col responsive to 1
     set html_before1 {<div class="grid-6 m-grid-12 s-grid-12"><div class="content-box">}
