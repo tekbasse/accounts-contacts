@@ -26,7 +26,7 @@ set f_lol [list \
 set html_before1 { <div class="grid-2 m-grid-6 s-grid-12"><div class="content-box">}
 set html_after {</div></div>}
 set html_before2 { <div class="grid-2 m-grid-3 s-grid-6"><div class="content-box">}
-
+set html_before3 {<div class="grid-6 m-grid-6 s-grid-6"><div class="content-box">
 
 
 # Make a subset of fields into a row, expandable to multiple rows.

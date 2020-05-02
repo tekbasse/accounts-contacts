@@ -1,27 +1,22 @@
+# Modify or display a single contact.
+
 set title "Contact"
 set context [list $title]
 
-# This is the page for modifying and displaying a single contact.
-
-
-
-# defaults
 
 set user_id [ad_conn user_id]
 # unset instance_id for qc_set_instance_id
 qc_set_instance_id
 ns_log Notice "contact.tcl.11 instance_id '${instance_id}'"
 
-
-# in accounts-contacts, differentiate org_contact_id from contact_id
-# org_contact_id  is the contact_id of the user
-# contact_id is the contact_id of editable data in focus
+# In accounts-contacts,
+# differentiate user's org_contact_id from contact_id
+# org_contact_id is the contact_id of the user
+# contact_id is the contact_id in focus
 set org_contact_id [qc_set_contact_id ]
+set contact_id ""
 # contact_id is upvar'd by qc_set_contact_id. Here, it creates name conflict.
 #unset contact_id, set it to "" for logging.
-set contact_id ""
-
-
 
 set property_label [qc_parameter_get propertyLabel $instance_id "org_accounts"]
 
@@ -43,6 +38,7 @@ set form_submitted_p [qf_get_inputs_as_array input_array]
 
 set save_exists_p [info exists input_array(save)]
 set update_exists_p [info exists input_array(update)]
+set save_as_new_exists_p [info exists input_array(save_as_new)]
 set qf_id_exists_p [info exists input_array(id)]
 set qf_contact_id_exists_p [info exists input_array(contact_id) ]
 set qf_trash_p [info exists input_array(qf_trash_p) ]
@@ -59,7 +55,8 @@ if { $qf_id_exists_p || $qf_contact_id_exists_p } {
     ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
 }
 set contact_rec_get_p 0
-if { $contact_id_exists_p && !( $save_exists_p || $update_exists_p ) } {
+if { $contact_id_exists_p && !( $save_exists_p || $update_exists_p \
+                                    || $save_as_new_p ) } {
     set contact_rec_get_p 1
 }
 
@@ -73,9 +70,9 @@ if { ( $qf_trash_p || $qf_archive_p ) && !$user_delete_p } {
 # Actions before validation
 #
     
-append a $qf_trash_p $qf_archive_p $contact_rec_get_p
-switch -exact $a {
-    001 {
+append a $qf_trash_p $qf_archive_p $contact_rec_get_p $contact_id_exists_p
+switch -exact -- $a {
+    0011 {
         # Defer other actions until after form validates.
         set record_nvl [qal_contact_read $contact_id $org_contact_id]
         ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
@@ -83,19 +80,19 @@ switch -exact $a {
             set input_array(${n}) ${v}
         }
     }
-    010 {
+    0101 {
         if { $input_array(time_end) eq "" } { 
             set input_array(time_end) [qf_clock_format [clock seconds]]
         }
         set r_contact_id [qal_contact_write input_array]
         if { $r_contact_id eq "" } {
-                append content_html "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
+            append content_html "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
             ns_log Warning "accounts-contacts/www/contact.tcl.98 unable to archive contact_id '${contact_id}"
         } else {
             set redirect_url "index"
         }
     }
-    100  {
+    1001  {
         set success_p [qal_contact_trash $contact_id]
         if { $success_p eq "" } {
             set message "<p>#acs-tcl.lt_We_had_a_problem_proc# #acs-tcl.Succes_error_submitted#</p>"
@@ -108,28 +105,38 @@ switch -exact $a {
     }
 }
 
+set html_before1 { <div class="grid-2 m-grid-6 s-grid-12"><div class="content-box">}
+set html_before2 { <div class="grid-2 m-grid-3 s-grid-6"><div class="content-box">}
+set html_before3 { <div class="grid-6 m-grid-6 s-grid-6"><div class="content-box">}
+set html_after {</div></div>}
 
-qal_contact_form_def -field_values_arr_name f_lol
+qal_contact_form_def -field_values_lol_name f_lol
+
 set f_buttons_lol [list \
-                       [list type submit name save context content_c5 \
-                            value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" action contact ] ]
+                       [list type submit name save context content_c5 value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
 
-if { $contact_id ne "" } {
-    set btn_update [list type submit name update context content_c5 \
-                        value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" action contact ]
+if { $contact_id_exists_p } {
+    set btn_update_lol [list \
+                            [list type submit name update context content_c5 value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
+                            [list type submit name save_as_new context content_c5 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
+                        
     lappend f_buttons_lol $btn_update
     if { $delete_p } {
         set f_btns_trash_archive_lol [list \
-                                          [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a action contact ] \
-                                          [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b action contact ] ]
+                                          [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a ] \
+                                          [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b ] ]
     }
     qf_append_lol f_buttons_lol $f_btns_trash_archive_lol
 }
 
 qf_append_lol f_buttons_lol [qac_ar_button_defs_lol \
-                                          -accounts_receivables_url $ar_pkg_url]
-qac_ap_button_defs_lol -accounts_paybables_url $ap_pkg_url
-qac_al_button_defs_lol -accounts_ledger_url $al_pkg_url
+                                 -accounts_receivables_url $ar_pkg_url]
+qf_append_lol f_buttons_lol [qac_ap_button_defs_lol \
+                                 -accounts_paybables_url $ap_pkg_url]
+qf_append_lol f_buttons_lol [qac_al_button_defs_lol \
+                                 -accounts_ledger_url $al_pkg_url]
+set btn_cancel_list [list type submit name cancel context content_c5 value "\#acs-kernel.common_cancel\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] 
+qf_append_lol f_lol $f_buttons_lol
 
 ::qfo::array_set_form_list \
     -list_of_lists_name f_lol \
@@ -154,15 +161,15 @@ if { $validated_p } {
     #  Actions after validation
     #
     
-    if { $contact_id eq "" } {
-        qal_contact_create input_array
-        ns_log Notice "accounts-contacts/www/contact.tcl creating contact: array get input_array '[array get input_array]'"
+    if { $contact_id eq "" || $save_as_new_p } {
+        set contact_id [qal_contact_create input_array]
+        ns_log Notice "accounts-contacts/www/contact.tcl.160 creating contact: array get input_array '[array get input_array]'"
     } else {
-        set contact_id [qal_contact_write input_array]
-        ns_log Notice "accounts-contacts/www/contact.tcl writing contact_id '${contact_id}': array get input_array '[array get input_array]'"
+        set new_contact_id [qal_contact_write input_array]
+        if { $new_contact_id ne $contact_id } {
+            ns_log Warning "accounts-contacts/www/contact.tcl.164 contact_id '${contact_id}' new_contact_id '${new_contact_id}' are different. Should be same."
+        }
     }
-
-    #qf_append_lol f_lol ????
 
     qac_extended_package_urls_get \
         -accounts_receivables_vname ar_pkg_url \
@@ -188,23 +195,21 @@ if { $validated_p } {
         rp_internal_redirect $redirect_url
         ad_script_abort
     }
-    
 }
 
-
+if { $write_p && $validated_p && !$content_id_exists_p } {
+    # If contact_id exists now, but didn't when page was validated,
+    # we need to add update and save_as_new buttons.
+    # For cases like this, qal_3g ideally needs to be two separate procs:
+    # qal_3g_validate and qal_3g_render_form
+    # which re-renders the form definition
+    # We can still add it manually inserting the html into html content_c5.
+    # Add them after "save" button.
+    set update_html $html_before3
+    append update_html "<input name=\"update\" value=\"\#acs-kernel.common_update\#\" class=\"btn-big\" label=\"\"\n" $html_after
+    append update_html "<input name=\"save_as_new\" value=\"\#accounts-contacts.Save_as_new\#\" class=\"btn-big\" label=\"\"\n" $html_after
 
 
 }
-
-# notes on buttons
-# if content_id & edit_p, then show form
-# and update, cancel, post-as-new buttons
-
-# if no content_id, show blank form and
-# save, cancel buttons
-
-# otherwise display data ( disabled form)
-# and show edit button and other options..
-# see AR/ AP buttons above.
 
 
