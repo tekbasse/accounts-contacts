@@ -44,28 +44,38 @@ if { $user_write_p || $user_create_p } {
     set user_delete_p [qc_permission_p $user_id $org_contact_id $property_label delete $instance_id]
 
     if { $user_write_p } {
-        set input_array(id) ""
-        set input_array(contact_id) ""
-        # Get input_array, so we can set the state of the buttons
-        # and maybe perform some action before displaying another form.
+
         set form_submitted_p [qf_get_inputs_as_array input_array]
-        # no contact_id from form input implies new contact
+
         set contact_id_exists_p 0
-        if { [qf_is_natural_number $input_array(id) ] } {
-            set contact_id $input_array(id)
-            set contact_id_exists_p 1
-        } elseif { [qf_is_natural_number $input_array(contact_id) ] } {
-            set contact_id $input_array(contact_id)
-            set contact_id_exists_p 1
+        set qf_id_exists_p [info exists input_array(id)]
+        set qf_contact_id_exists_p [info exists input_array(contact_id) ]
+        set qf_trash_p [info exists input_array(qf_trash_p) ]
+        set qf_archive_p [info exists input_array(qf_archive_p) ]
+
+
+        if { $qf_id_exists_p || $qf_contact_id_exists_p } {
+            if { [qf_is_natural_number $input_array(id) ] } {
+                set contact_id $input_array(id)
+                set contact_id_exists_p 1
+            } elseif { [qf_is_natural_number $input_array(contact_id) ] } {
+                set contact_id $input_array(contact_id)
+                set contact_id_exists_p 1
+            }
+            ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
         }
-        ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
+        
+
+
+
+
 
         #
         # Actions
         #
         
-        # maybe trash or archive, but not both
-        # Put actions in a switch
+        # check if an action needs to be done and pass
+        # the contact_id maybe externally instead of displaying form again.
         append a $qf_trash_p $qf_archive_p $contact_id_exists_p
 
         switch -exact $a {
@@ -94,45 +104,12 @@ if { $user_write_p || $user_create_p } {
                 }
             }
             001 {
-                # If contact_id exists, update data, then
-                # check if an action needs to be done and pass
-                # the contact_id instead of displaying form again.
-                
-                # Are there ny actions that should be taken before
-                # or instead of rendering form ?
-                
-                qac_extended_package_urls_get \
-                    -accounts_receivables_vname ar_pkg_url \
-                    -accounts_payables_vname ap_pkg_url \
-                    -accounts_ledger_vname al_pkg_url
-        
-                set qf_archive_p [info exists input_array(qf_archive_p)]
-                set qf_trash_p [info exists input_array(qf_trash_p)]    
-                set redirect_url [qac_ar_buttons_transform \
-                                      -input_array_name input_array \
-                                      -accounts_receivables_url $ar_pkg_url]
-                set redirect_url [qac_ap_buttons_transform \
-                                      -input_array_name input_array \
-                                      -accounts_payables_url $ap_pkg_url]
-                set redirect_url [qac_al_buttons_transform \
-                                      -input_array_name input_array \
-                                      -accounts_ledger_url $al_pkg_url]
-                
-                set record_nvl [qal_contact_read $contact_id $org_contact_id]
-                ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
-                foreach {n v} $record_nvl {
-                    set $n $v
-                }
+                # Defer other actions until after form validates.
             }
-
         }
-        
-
     }
 
     qal_contact_form_def -field_values_arr_name f_lol
-
-    # add appropriate buttons to form defintion
     set f_buttons_lol [list \
                            [list type submit name save context content_c5 \
                                 value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" action contact ] ]
@@ -142,45 +119,22 @@ if { $user_write_p || $user_create_p } {
                             value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" action contact ]
         lappend f_buttons_lol $btn_update
         if { $delete_p } {
-            # todo
-            # Show button to archive contact record
-            #  (by posting an end-date, default to today as end-date)
-            # Show button to trash contact record
             set f_btns_trash_archive_lol [list \
-                                         [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a action contact ] \
-                                         [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b action contact ] ]
+                                              [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a action contact ] \
+                                              [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b action contact ] ]
         }
-
-
+        qf_append_lol2_to_lol1 f_buttons_lol f_btns_trash_archive_lol
     }
 
-    # Show button to edit contact record. No.
-    # Assume one wants to edit here.
-
-    # Todo
-    # Make a contact-view page to just see (with no edit button)
-    # for printouts and the like. Have the logo or something an anchor
-    # to click back out..
-        
-        # Show links to view/edit other addresses (separate from buttons)
-        #
-        # Sql-Ledger has other buttons:
-        # AR Transaction, Sales Invoice, Credit Invoice, POS, Sales Order,
-        # Quotation, Pricelist, New Number(copy to a new contact_id)
-        # We're using "save as new"
     qac_ar_button_defs_lol -accounts_receivables_url $ar_pkg_url
     qac_ap_button_defs_lol -accounts_paybables_url $ap_pkg_url
     qac_al_button_defs_lol -accounts_ledger_url $al_pkg_url
         
-
-    qf_append_lol2_to_lol1 f_lol f2_lol
-
-    ::qfo::form_list_def_to_array \
+    ::qfo::array_set_form_list \
         -list_of_lists_name f_lol \
         -fields_ordered_list_name qf_fields_ordered_list \
         -array_name f_arr \
         -ignore_parse_issues_p 0
-
 
     set validated_p [qal_3g \
                          -form_id 20200427 \
@@ -193,10 +147,8 @@ if { $user_write_p || $user_create_p } {
                          -form_varname "content_c" \
                          -write_p $write_p ]
 
-
-
-
     if { $validated_p } {
+
         if { $contact_id eq "" } {
             qal_contact_create input_array
             ns_log Notice "accounts-contacts/www/contact.tcl creating contact: array get input_array '[array get input_array]'"
@@ -204,10 +156,38 @@ if { $user_write_p || $user_create_p } {
             set contact_id [qal_contact_write input_array]
             ns_log Notice "accounts-contacts/www/contact.tcl writing contact_id '${contact_id}': array get input_array '[array get input_array]'"
         }
-        rp_form_put contact_id $contact_id
-    }
-}
 
+        qf_append_lol2_to_lol1 f_lol
+
+        
+        qac_extended_package_urls_get \
+            -accounts_receivables_vname ar_pkg_url \
+            -accounts_payables_vname ap_pkg_url \
+            -accounts_ledger_vname al_pkg_url
+        set redirect_url [qac_ar_buttons_transform \
+                              -input_array_name input_array \
+                              -accounts_receivables_url $ar_pkg_url]
+        set redirect_url [qac_ap_buttons_transform \
+                              -input_array_name input_array \
+                              -accounts_payables_url $ap_pkg_url]
+        set redirect_url [qac_al_buttons_transform \
+                              -input_array_name input_array \
+                              -accounts_ledger_url $al_pkg_url]
+        if { $redirect_url ne "" } {
+            rp_form_put contact_id $contact_id
+            rp_internal_redirect $redirect_url
+            ad_script_abort
+        }
+            
+    }
+
+    set record_nvl [qal_contact_read $contact_id $org_contact_id]
+    ns_log Notice "contact.tcl.87 record_nvl '${record_nvl}'"
+    foreach {n v} $record_nvl {
+        set $n $v
+    }
+
+}
 
 # notes on buttons
 # if content_id & edit_p, then show form
