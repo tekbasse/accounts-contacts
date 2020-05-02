@@ -146,7 +146,7 @@ ad_proc -private qal_contact_form_set {
                     [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before3 html_after $html_after label "#q-data-types.url#" ] \
                     [list name notes value $fc_arr(notes) context content_c3 datatype block_text cols 34 html_before $html_before3 html_after $html_after label "#accounts-contacts.notes#"] \
                    ]
-    qf_append_lol2_to_lol1 f2_lol f3_lol
+    qf_append_lol f2_lol $f3_lol
     
     return $f2_lol
 }
