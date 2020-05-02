@@ -53,7 +53,11 @@
   <if @content_c5@ not nil>
     <include src="/packages/accounts-contacts/lib/page-runner-block-1col" content_c1=@content_c5;noquote@>
   </if>
-  
+
+  <if @content_c6@ not nil && @contact_id@ not nil>
+    <include src="/packages/accounts-contacts/lib/page-runner-block-1col" content_c1=@content_c6;noquote@>
+  </if>
+
   @content_c_close;noquote@
 
 

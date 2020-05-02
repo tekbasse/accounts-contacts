@@ -115,26 +115,25 @@ qal_contact_form_def -field_values_lol_name f_lol
 set f_buttons_lol [list \
                        [list type submit name save context content_c5 value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
 
-if { $contact_id_exists_p } {
-    set btn_update_lol [list \
-                            [list type submit name update context content_c5 value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
-                            [list type submit name save_as_new context content_c5 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
-                        
-    lappend f_buttons_lol $btn_update
-    if { $delete_p } {
-        set f_btns_trash_archive_lol [list \
-                                          [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a ] \
-                                          [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b ] ]
-    }
+if { $delete_p } {
+    set f_btns_trash_archive_lol [list \
+                                      [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a ] \
+                                      [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b ] ]
     qf_append_lol f_buttons_lol $f_btns_trash_archive_lol
 }
 
+# context_c6 displayed based on .adp logic
+set btn_update_lol [list \
+                        [list type submit name update context content_c6 value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
+                        [list type submit name save_as_new context content_c6 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
+qf_append_lol f_buttons_lol $btn_update_lol
 qf_append_lol f_buttons_lol [qac_ar_button_defs_lol \
                                  -accounts_receivables_url $ar_pkg_url]
 qf_append_lol f_buttons_lol [qac_ap_button_defs_lol \
                                  -accounts_paybables_url $ap_pkg_url]
 qf_append_lol f_buttons_lol [qac_al_button_defs_lol \
                                  -accounts_ledger_url $al_pkg_url]
+
 set btn_cancel_list [list type submit name cancel context content_c5 value "\#acs-kernel.common_cancel\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] 
 qf_append_lol f_lol $f_buttons_lol
 
@@ -196,20 +195,3 @@ if { $validated_p } {
         ad_script_abort
     }
 }
-
-if { $write_p && $validated_p && !$content_id_exists_p } {
-    # If contact_id exists now, but didn't when page was validated,
-    # we need to add update and save_as_new buttons.
-    # For cases like this, qal_3g ideally needs to be two separate procs:
-    # qal_3g_validate and qal_3g_render_form
-    # which re-renders the form definition
-    # We can still add it manually inserting the html into html content_c5.
-    # Add them after "save" button.
-    set update_html $html_before3
-    append update_html "<input name=\"update\" value=\"\#acs-kernel.common_update\#\" class=\"btn-big\" label=\"\"\n" $html_after
-    append update_html "<input name=\"save_as_new\" value=\"\#accounts-contacts.Save_as_new\#\" class=\"btn-big\" label=\"\"\n" $html_after
-
-
-}
-
-
