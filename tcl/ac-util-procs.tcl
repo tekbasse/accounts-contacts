@@ -613,7 +613,7 @@ ad_proc -private qal_vendor_id_from_contact_id {
 return $id
 }
 
-ad_proc -private qac_extended_package_urls {
+ad_proc -private qac_extended_package_urls_get {
     {-accounts_receivables_vname ""}
     {-accounts_payables_vname ""}
     {-accounts_ledger_vname ""}
@@ -670,7 +670,7 @@ ad_proc -private qac_ar_button_defs_lol {
     Button definitions return as a list of lists, or an empty list
     if url is empty string.
     
-    @see qac_extended_package_urls
+    @see qac_extended_package_urls_get
     @see qal_3g
     @see qfo_2g
 } {
@@ -759,7 +759,7 @@ ad_proc -private qac_ap_button_defs_lol {
     Button definitions return as a list of lists, or an empty list
     if url is empty string.
     
-    @see qac_extended_package_urls
+    @see qac_extended_package_urls_get
     @see qal_3g
     @see qfo_2g
 } {
@@ -842,7 +842,7 @@ ad_proc -private qac_al_button_defs_lol {
     Button definitions return as a list of lists, or an empty list
     if url is empty string.
     
-    @see qac_extended_package_urls
+    @see qac_extended_package_urls_get
     @see qal_3g
     @see qfo_2g
 } {

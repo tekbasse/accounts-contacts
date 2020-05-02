@@ -58,10 +58,10 @@ ad_proc -private qal_contact_defaults {
     return 1
 }
 
-ad_proc -private qal_contact_form_def {
+ad_proc -private qal_contact_form_set {
     {-field_values_arr_name ""}
 } {
-    Returns a form definiton for qal_contact table to feed to qfo::form_list_def_to_array and subsequently to qal_3g.
+    Returns a form definiton for qal_contact table to feed to qfo::array_set_form_list and subsequently to qal_3g.
     
     <code>field_values_arr_name</code> is the name of an array
     where the indexes are names of fields, and
@@ -71,7 +71,7 @@ ad_proc -private qal_contact_form_def {
     
     @see qal_contact_keys
     @see qal_contact_defaults
-    @see qfo::form_list_def_to_array
+    @see qfo::array_set_form_list
     @see qal_3g
 } {
     upvar 1 instance_id instance_id
@@ -134,7 +134,7 @@ ad_proc -private qal_contact_form_def {
                         [list name cc value $fa_arr(cc) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Cc#"] \
                         [list name bcc value $fa_arr(bcc) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Bcc#"] ]
     
-    set f2_lol [qfo::form_list_def_to_css_table_rows -list_of_lists_name f_lol -form_field_defs_to_multiply addrs_lol -rows_count 1]
+    set f2_lol [qfo::set_form_list_repeat -list_of_lists_name f_lol -form_field_defs_to_multiply addrs_lol -rows_count 1]
     
     # Add the rest of the form elements. Skipping: taxnumber, iban, bic, currency
     set f3_lol [list \
