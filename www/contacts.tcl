@@ -22,7 +22,7 @@ set read_p [qc_permission_p $user_id $org_contact_id $property_label read $insta
 
 if { !$read_p } {
     set title "#q-control.You_don_t_have_permission#"
-    ad_return_exception_page 404 $title $title
+    ad_return_exception_page 401 $title $title
     ad_script_abort
 }
 
@@ -57,7 +57,7 @@ set titles_list [list "#accounts-contacts.label#" "#accounts-contacts.name#" "#a
 
 set sort_type_list [list -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ignore ]
 
-qfo_sp_table_g2 \
+qfo_sp_table_g3 \
     -nav_current_pos_html_varname nav_current_html \
     -nav_next_links_html_varname nav_next_html \
     -nav_prev_links_html_varname nav_prev_html \
