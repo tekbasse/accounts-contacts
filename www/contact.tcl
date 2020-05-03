@@ -38,6 +38,7 @@ set form_submitted_p [qf_get_inputs_as_array input_array]
 
 set save_exists_p [info exists input_array(save)]
 set update_exists_p [info exists input_array(update)]
+set cancel_exists_p [info exists input_array(cancel)]
 set save_as_new_exists_p [info exists input_array(save_as_new)]
 set qf_id_exists_p [info exists input_array(id)]
 set qf_contact_id_exists_p [info exists input_array(contact_id) ]
@@ -55,8 +56,8 @@ if { $qf_id_exists_p || $qf_contact_id_exists_p } {
     ns_log Notice "contact.tcl.71 contact_id '${contact_id}' "
 }
 set contact_rec_get_p 0
-if { $contact_id_exists_p && !( $save_exists_p || $update_exists_p \
-                                    || $save_as_new_p ) } {
+if { $contact_id_exists_p \
+         && !( $save_exists_p || $update_exists_p || $save_as_new_p ) } {
     set contact_rec_get_p 1
 }
 
@@ -114,19 +115,20 @@ set html_after {</div></div>}
 qal_contact_form_def -field_values_lol_name f_lol
 
 set f_buttons_lol [list \
-                       [list type submit name save context content_c5 value "\#accounts-contacts.Save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
+                       [list type submit name save context content_c5 value "\#accounts-contacts.Save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] \
+                       [list type submit name cancel context content_c5 value "\#acs-kernel.common_cancel\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] ]
 
-if { $user_delete_p } {
-    set f_btns_trash_archive_lol [list \
-                                      [list type submit name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b context content_c5 class "btn-big"] ]
-    qf_append_lol f_buttons_lol $f_btns_trash_archive_lol
-}
 
 # context_c6 displayed based on .adp logic
 set btn_update_lol [list \
                         [list type submit name update context content_c6 value "\#accounts-contacts.Update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
                         [list type submit name save_as_new context content_c6 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] \
                         [list type submit name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a context content_c6 class "btn-big"] ]
+if { $user_delete_p } {
+    set f_btns_trash_archive_lol [list \
+                                      [list type submit name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b context content_c6 class "btn-big"] ]
+    qf_append_lol f_buttons_lol $f_btns_trash_archive_lol
+}
 qac_extended_package_urls_get \
     -accounts_receivables_vname ar_pkg_url \
     -accounts_payables_vname ap_pkg_url \
@@ -139,7 +141,6 @@ qf_append_lol f_buttons_lol [qac_ap_button_defs_lol \
 qf_append_lol f_buttons_lol [qac_al_button_defs_lol \
                                  -accounts_ledger_url $al_pkg_url]
 
-set btn_cancel_list [list type submit name cancel context content_c5 value "\#acs-kernel.common_cancel\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] 
 qf_append_lol f_lol $f_buttons_lol
 
 ::qfo::array_set_form_list \
