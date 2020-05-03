@@ -31,12 +31,14 @@
   <msg key="Notes">Notes</msg>
   <msg key="Other_addresses">Other addresses</msg>
   <msg key="Phone">Phone</msg>
+  <msg key="Save">Save</msg>
   <msg key="Save_as_new">Save as new</msg>
   <msg key="SIC">SIC</msg>
   <msg key="Shipping_Address">Shipping Address</msg>
   <msg key="Startdate">Startdate</msg>
   <msg key="Street_addresses">Street addresses</msg>
   <msg key="Trash">Trash</msg>
+  <msg key="Update">Update</msg>
   <msg key="bic">BIC</msg>
   <msg key="currency">Currency</msg>
   <msg key="delete">Delete</msg>
