@@ -114,19 +114,19 @@ set html_after {</div></div>}
 qal_contact_form_def -field_values_lol_name f_lol
 
 set f_buttons_lol [list \
-                       [list type submit name save context content_c5 value "\#acs-kernel.common_save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
+                       [list type submit name save context content_c5 value "\#accounts-contacts.Save\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
 
 if { $user_delete_p } {
     set f_btns_trash_archive_lol [list \
-                                      [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a context content_c5] \
-                                      [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b context content_c5] ]
+                                      [list type submit name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b context content_c5 class "btn-big"] ]
     qf_append_lol f_buttons_lol $f_btns_trash_archive_lol
 }
 
 # context_c6 displayed based on .adp logic
 set btn_update_lol [list \
-                        [list type submit name update context content_c6 value "\#acs-kernel.common_update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
-                        [list type submit name save_as_new context content_c6 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] ]
+                        [list type submit name update context content_c6 value "\#accounts-contacts.Update\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big" ] \
+                        [list type submit name save_as_new context content_c6 value "\#accounts-contacts.Save_as_new\#" datatype text html_before $html_before3 html_after $html_after label "" class "btn-big"] \
+                        [list type submit name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a context content_c6 class "btn-big"] ]
 qac_extended_package_urls_get \
     -accounts_receivables_vname ar_pkg_url \
     -accounts_payables_vname ap_pkg_url \

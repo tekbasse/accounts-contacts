@@ -684,13 +684,13 @@ ad_proc -private qac_ar_button_defs_lol {
         # Sales Quotation
         # Customer Pricelist
         set ar_btn_defs_lol [list \
-                                 [list name qf_ar_trans value "#accounts-ledger.AR_Transaction#" id qac-20200428a] \
-                                 [list name qf_inv_sales value "#accounts-ledger.Add_Sales_Invoice#" id qac-20200428b] \
-                                 [list name qf_inv_credit value "#accounts-ledger.Add_Credit_Invoice#" id qac-20200428c] \
-                                 [list name qf_inv_pos value "#accounts-ledger.Add_POS_Invoice#" id qac-20200428d] \
-                                 [list name qf_ord_sales value "#accounts-ledger.Add_Add_Sales_Order" id qac-20200428e] \
-                                 [list name qf_quote_sales value "#accounts-ledger.Add_Quotation#" id qac-20200428f] \
-                                 [list name qf_pricelist_c value "(#accounts-ledger.Customer#) #accounts-ledger.Pricelist#" id qac-20200428g] ]
+                                 [list type submit name qf_ar_trans value "#accounts-ledger.AR_Transaction#" id qac-20200428a] \
+                                 [list type submit name qf_inv_sales value "#accounts-ledger.Add_Sales_Invoice#" id qac-20200428b] \
+                                 [list type submit name qf_inv_credit value "#accounts-ledger.Add_Credit_Invoice#" id qac-20200428c] \
+                                 [list type submit name qf_inv_pos value "#accounts-ledger.Add_POS_Invoice#" id qac-20200428d] \
+                                 [list type submit name qf_ord_sales value "#accounts-ledger.Add_Add_Sales_Order" id qac-20200428e] \
+                                 [list type submit name qf_quote_sales value "#accounts-ledger.Add_Quotation#" id qac-20200428f] \
+                                 [list type submit name qf_pricelist_c value "(#accounts-ledger.Customer#) #accounts-ledger.Pricelist#" id qac-20200428g] ]
     } else {
         set ar_btn_defs_lol [list ]
     }
@@ -772,12 +772,12 @@ ad_proc -private qac_ap_button_defs_lol {
         # RFQ
         # Vendor Pricelist
         set ap_btn_defs_lol [list \
-                                 [list name qf_ap_trans value "#accounts-ledger.AP_Transaction#" id qac-20200428n] \
-                                 [list name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice#" id qac-20200428o] \
-                                 [list name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order#" id qac-20200428p] \
-                                 [list name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote" id qac-20200428r] \
-                                 [list name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation#" id qac-20200428s] \
-                                 [list name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist#" id qac-20200428t] ]
+                                 [list type submit name qf_ap_trans value "#accounts-ledger.AP_Transaction#" id qac-20200428n] \
+                                 [list type submit name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice#" id qac-20200428o] \
+                                 [list type submit name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order#" id qac-20200428p] \
+                                 [list type submit name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote" id qac-20200428r] \
+                                 [list type submit name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation#" id qac-20200428s] \
+                                 [list type submit name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist#" id qac-20200428t] ]
     } else {
         set ap_btn_defs_lol [list ]
     }
@@ -850,8 +850,8 @@ ad_proc -private qac_al_button_defs_lol {
         # Vendor - to see contact's vendor record or make one
         # Customer - to see contact's customer record or make one
         set al_btn_defs_lol [list \
-                                 [list name qf_vendor value "#accounts-ledger.Vendor#" id qac-20200428x] \
-                                 [list name qf_customer value "#accounts-ledger.Customer#" id qac-20200428y] ]
+                                 [list type submit name qf_vendor value "#accounts-ledger.Vendor#" id qac-20200428x] \
+                                 [list type submit name qf_customer value "#accounts-ledger.Customer#" id qac-20200428y] ]
     } else {
         set al_btn_defs_lol [list ]
     }

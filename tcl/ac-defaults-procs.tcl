@@ -121,14 +121,14 @@ ad_proc -private qal_contact_form_def {
                         [list name address0 value $fa_arr(address0) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#q-data-types.street_address# 1/3" title "#q-data-types.street_address_hint#"] \
                         [list name address1 value $fa_arr(address1) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#q-data-types.street_address# 2/3" title "#q-data-types.street_address_hint#"] \
                         [list name address2 value $fa_arr(address2) context content_c2 datatype text maxlength 32 html_before $html_before1 html_after $html_after label "#q-data-types.street_address# 3/3" title "#q-data-types.street_address_hint#"] \
-                        [list name city value $fa_arr(city) context content_c2 datatype text maxlength 32 html_before $html_before2 html_after $html_after label "#accounts-contacts.City#"] \
-                        [list name state value $fa_arr(state) context content_c2 datatype region maxlength 32 html_before $html_before2 html_after $html_after label "#q-data-types.region#"] \
-                        [list name postal_code value $fa_arr(postal_code) context content_c2 datatype postal_code maxlength 10 html_before $html_before2 html_after $html_after label "#q-data-types.postal_code#"] \
-                        [list name country_code value $fa_arr(country_code) context content_c2 datatype country_code maxlength 32 html_before $html_before3 html_after $html_after label "#q-data-types.country_code#"] \
-                        [list name attn value $fa_arr(attn) context content_c2 datatype text maxlength 32 html_before $html_before3 html_after $html_after label "#q-data-types.attn#" title "#q-data-types.attn_hint#"] \
-                        [list name phone  value $fa_arr(phone) context content_c2 datatype phone_number html_before $html_before2 html_after $html_after label "#q-data-types.phone_number#"] \
-                        [list name phone_time value $fa_arr(phone_time) context content_c2 datatype text html_before $html_before2 html_after $html_after label "#accounts-contacts.phone_time#" title "#accounts-contacts.phone_time_hint#" ] \
-                        [list name fax value $fa_arr(fax) context content_c2 datatype phone_number html_before $html_before2 html_after $html_after label "#accounts-contacts.Fax#"] \
+                        [list name city value $fa_arr(city) context content_c2 datatype text maxlength 32 html_before $html_before4 html_after $html_after label "#accounts-contacts.City#"] \
+                        [list name state value $fa_arr(state) context content_c2 datatype region maxlength 32 html_before $html_before4 html_after $html_after label "#q-data-types.region#"] \
+                        [list name postal_code value $fa_arr(postal_code) context content_c2 datatype postal_code maxlength 10 html_before $html_before4 html_after $html_after label "#q-data-types.postal_code#"] \
+                        [list name country_code value $fa_arr(country_code) context content_c2 datatype country_code maxlength 32 html_before $html_before4 html_after $html_after label "#q-data-types.country_code#"] \
+                        [list name attn value $fa_arr(attn) context content_c2 datatype text maxlength 32 html_before $html_before4 html_after $html_after label "#q-data-types.attn#" title "#q-data-types.attn_hint#"] \
+                        [list name phone  value $fa_arr(phone) context content_c2 datatype phone_number html_before $html_before4 html_after $html_after label "#q-data-types.phone_number#"] \
+                        [list name phone_time value $fa_arr(phone_time) context content_c2 datatype text html_before $html_before4 html_after $html_after label "#accounts-contacts.phone_time#" title "#accounts-contacts.phone_time_hint#" ] \
+                        [list name fax value $fa_arr(fax) context content_c2 datatype phone_number html_before $html_before4 html_after $html_after label "#accounts-contacts.Fax#"] \
                         [list name email value $fa_arr(email) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Email#"] \
                         [list name cc value $fa_arr(cc) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Cc#"] \
                         [list name bcc value $fa_arr(bcc) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Bcc#"] ]
@@ -145,8 +145,8 @@ ad_proc -private qal_contact_form_def {
                     [list name timezone value $fc_arr(timezone) context content_c3 datatype text maxlength 4 html_before $html_before2 html_after $html_after label "#accounts-contacts.timezone#" ] \
                     [list name time_start value $fc_arr(time_start) context content_c3 datatype date html_before $html_before3 html_after $html_after label "#accounts-contacts.Startdate#" ] \
                     [list name time_end value $fc_arr(time_end) context content_c3 datatype date html_before $html_before3 html_after $html_after label "#accounts-contacts.Enddate#" ] \
-                    [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before3 html_after $html_after label "#q-data-types.url#" ] \
-                    [list name notes value $fc_arr(notes) context content_c3 datatype block_text cols 34 html_before $html_before3 html_after $html_after label "#accounts-contacts.notes#"] \
+                    [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before1 html_after $html_after label "#q-data-types.url#" ] \
+                    [list name notes value $fc_arr(notes) context content_c3 datatype block_text cols 34 html_before $html_before1 html_after $html_after label "#accounts-contacts.notes#"] \
                    ]
     qf_append_lol f_lol $f3_lol
     
