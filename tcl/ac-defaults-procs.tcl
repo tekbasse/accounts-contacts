@@ -114,7 +114,6 @@ ad_proc -private qal_contact_form_def {
         }
         lappend addrs_type_lol $at_list
     }
-    qf_append_lol f_lol $at_lol
     
     set addrs_lol  [list \
                         [list name address_type type select value $addrs_type_lol context content_c2 html_before $html_before1 html_after $html_after ] \
