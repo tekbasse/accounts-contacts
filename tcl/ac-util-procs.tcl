@@ -772,12 +772,12 @@ ad_proc -private qac_ap_button_defs_lol {
         # RFQ
         # Vendor Pricelist
         set ap_btn_defs_lol [list \
-                                 [list type submit name qf_ap_trans value "#accounts-ledger.AP_Transaction#" id qac-20200428n] \
-                                 [list type submit name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice#" id qac-20200428o] \
-                                 [list type submit name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order#" id qac-20200428p] \
-                                 [list type submit name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote" id qac-20200428r] \
-                                 [list type submit name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation#" id qac-20200428s] \
-                                 [list type submit name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist#" id qac-20200428t] ]
+                                 [list type submit name qf_ap_trans value "#accounts-ledger.AP_Transaction\#" id qac-20200428n class "btn-big"] \
+                                 [list type submit name qf_inv_vendor value "#accounts-ledger.Add_Vendor_Invoice\#" id qac-20200428o class "btn-big"] \
+                                 [list type submit name qf_ord_purchase value "#accounts-ledger.Add_Purchase_Order\#" id qac-20200428p class "btn-big"] \
+                                 [list type submit name qf_quote_vendor value "#accounts-ledger.Add_Vendor_Quote\#" id qac-20200428r class "btn-big"] \
+                                 [list type submit name qf_quote_request value "#accounts-ledger.Add_Request_for_Quotation\#" id qac-20200428s class "btn-big"] \
+                                 [list type submit name qf_pricelist_v value "(#accounts-ledger.Vendor#) #accounts-ledger.Pricelist\#" id qac-20200428t class "btn-big"] ]
     } else {
         set ap_btn_defs_lol [list ]
     }
@@ -850,8 +850,8 @@ ad_proc -private qac_al_button_defs_lol {
         # Vendor - to see contact's vendor record or make one
         # Customer - to see contact's customer record or make one
         set al_btn_defs_lol [list \
-                                 [list type submit name qf_vendor value "#accounts-ledger.Vendor#" id qac-20200428x] \
-                                 [list type submit name qf_customer value "#accounts-ledger.Customer#" id qac-20200428y] ]
+                                 [list type submit name qf_vendor value "#accounts-ledger.Vendor#" id qac-20200428x class "btn-big"] \
+                                 [list type submit name qf_customer value "#accounts-ledger.Customer#" id qac-20200428y class "btn-big"] ]
     } else {
         set al_btn_defs_lol [list ]
     }
