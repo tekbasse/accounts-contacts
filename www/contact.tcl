@@ -71,6 +71,7 @@ if { ( $qf_trash_p || $qf_archive_p ) && !$user_delete_p } {
 #
     
 append a $qf_trash_p $qf_archive_p $contact_rec_get_p $contact_id_exists_p
+set redirect_url ""
 switch -exact -- $a {
     0011 {
         # Defer other actions until after form validates.
@@ -117,8 +118,8 @@ set f_buttons_lol [list \
 
 if { $user_delete_p } {
     set f_btns_trash_archive_lol [list \
-                                      [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a ] \
-                                      [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b ] ]
+                                      [list name qf_archive_p value "#accounts-contacts.Archive#" id contact-20180826a context content_c5] \
+                                      [list name qf_trash_p value "#accounts-contacts.Trash#" id contact-20180826b context content_c5] ]
     qf_append_lol f_buttons_lol $f_btns_trash_archive_lol
 }
 

@@ -64,12 +64,10 @@ ad_proc -private qal_contact_form_def {
 } {
     Returns a form definiton for qal_contact table to feed to qfo::array_set_form_list and subsequently to qal_3g.
     
-    <code>field_values_lol_name</code> is the name of an array
-    where the indexes are names of fields, and
-    their values replace internal defaults.
-    This is more for customizations that might occur at a single page,
-    where the defaults are tweaked for one reason or another.
-    
+    <code>field_values_lol_name</code> is the name of a variable
+    which will be replaced with a list of lists containing
+    the defining form elements and attributes of the contact form.
+    It's an alternate way to pass the info.
     @see qal_contact_keys
     @see qal_contact_defaults
     @see qfo::array_set_form_list
@@ -77,7 +75,7 @@ ad_proc -private qal_contact_form_def {
 } {
     upvar 1 instance_id instance_id
     if { $field_values_lol_name ne "" } {
-        upvar 1 $field_values_lol_name fv_arr
+        upvar 1 $field_values_lol_name f_lol
     }
     # 2 col responsive to 1
     set html_before1 {<div class="grid-6 m-grid-12 s-grid-12"><div class="content-box">}
@@ -116,7 +114,7 @@ ad_proc -private qal_contact_form_def {
         }
         lappend addrs_type_lol $at_list
     }
-
+    qf_append_lol f_lol $at_lol
     
     set addrs_lol  [list \
                         [list name address_type type select value $addrs_type_lol context content_c2 html_before $html_before1 html_after $html_after ] \
@@ -134,10 +132,13 @@ ad_proc -private qal_contact_form_def {
                         [list name email value $fa_arr(email) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Email#"] \
                         [list name cc value $fa_arr(cc) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Cc#"] \
                         [list name bcc value $fa_arr(bcc) context content_c2 datatype email html_before $html_before2 html_after $html_after label "#accounts-contacts.Bcc#"] ]
+    qf_append_lol f_lol $addrs_lol
     
     set f2_lol [qfo::set_form_list_repeat -list_of_lists_name f_lol -form_field_defs_to_multiply addrs_lol -rows_count 1]
-    
-    # Add the rest of the form elements. Skipping: taxnumber, iban, bic, currency
+    qf_append_lol f_lol $f2_lol
+
+    # Add the rest of the form elements.
+    # Skipping: taxnumber, iban, bic, currency
     set f3_lol [list \
                     [list name sic_code value $fc_arr(sic_code) context content_c3 datatype text maxlength 15 html_before $html_before2 html_after $html_after label "#accounts-contacts.SIC#"] \
                     [list name language_code value $fc_arr(language_code) context content_c3 datatype text maxlength 12 html_before $html_before2 html_after $html_after label "#accounts-contacts.language_code#" ] \
@@ -147,9 +148,9 @@ ad_proc -private qal_contact_form_def {
                     [list name url value $fc_arr(url) context content_c3 datatype url html_before $html_before3 html_after $html_after label "#q-data-types.url#" ] \
                     [list name notes value $fc_arr(notes) context content_c3 datatype block_text cols 34 html_before $html_before3 html_after $html_after label "#accounts-contacts.notes#"] \
                    ]
-    qf_append_lol f2_lol $f3_lol
+    qf_append_lol f_lol $f3_lol
     
-    return $f2_lol
+    return $f_lol
 }
 
 ad_proc -private qal_contact_user_map_defaults {
