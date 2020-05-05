@@ -48,12 +48,14 @@ foreach c_list $contacts_lists {
     lassign $c_list id rev_id instance_id parent_id label name street_addrs_id mailing_addrs_id billing_addrs_id vendor_id customer_id taxnumber sic_code iban bic language_code currency timezone time_start time_end url user_id created created_by trashed_p trashed_by trashed_ts notes
     set view_button [qf_button_form action contact name view value "#acs-kernel.common_View#" name contact_id value $id ]
     ns_log Notice "view_button '${view_button}'"
-    set t_list [list $label $name $taxnumber $sic_code $iban $bic $language_code $currency $timezone $time_start $time_end $url $view_button ]
+    set t_list [list $label $name $sic_code  $language_code $currency $timezone $time_start $time_end $url $view_button ]
+    # 
     lappend table_lists $t_list
 }
 
 
-set titles_list [list "#accounts-contacts.label#" "#accounts-contacts.name#" "#accounts-contacts.taxnumber#" "#accounts-contacts.sic_code#" "#accounts-contacts.iban#" "#accounts-contacts.bic#" "#accounts-contacts.language_code#" "#accounts-contacts.currency#" "#accounts-contacts.timezone#" "#accounts-contacts.time_start#" "#accounts-contacts.time_end#" "#accounts-contacts.url#" "#accounts-contacts.notes#" ]
+set titles_list [list "#accounts-contacts.label#" "#accounts-contacts.name#" "#accounts-contacts.sic_code#" "#accounts-contacts.language_code#" "#accounts-contacts.currency#" "#accounts-contacts.timezone#" "#accounts-contacts.time_start#" "#accounts-contacts.time_end#" "#accounts-contacts.url#" "#accounts-contacts.notes#" ]
+
 
 set sort_type_list [list -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ignore ]
 
