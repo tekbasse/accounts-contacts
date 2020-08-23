@@ -60,9 +60,7 @@ set titles_list [list "#accounts-contacts.label#" "#accounts-contacts.name#" "#a
 set sort_type_list [list -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ascii -ignore ]
 
 qfo_sp_table_g3 \
-    -nav_current_pos_html_varname nav_current_html \
-    -nav_next_links_html_varname nav_next_html \
-    -nav_prev_links_html_varname nav_prev_html \
+    -nav_buttons_html_varname nav_buttons_html \
     -p_varname input_array(p) \
     -s_varname input_array(s) \
     -sort_type_list $sort_type_list \
@@ -72,7 +70,7 @@ qfo_sp_table_g3 \
     -titles_list_varname titles_list \
     -titles_html_list_varname titles_html_list
 
-append content_html $nav_prev_html "&nbsp;" $nav_current_html "&nbsp;" $nav_next_html
+append content_html $nav_buttons_html
 set br [qf_element tag br]
 append content_html $br $br
 append content_html {<a href="contacts">#acs-kernel.common_reset#</a>}
